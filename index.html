@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip Planner - Monthly Destination Suggestions</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="planner-card" aria-label="Trip month selector">
+        <h1>Trip Planner</h1>
+        <p>Select your travel month to see the best places to visit.</p>
+
+        <label for="monthSelect" class="label">Trip Month</label>
+        <select id="monthSelect" aria-describedby="resultHeading">
+          <option value="">-- Select a month --</option>
+        </select>
+
+        <div class="region-wrap" aria-label="Destination region selector">
+          <label for="regionSelect" class="label">Destination Type</label>
+          <select id="regionSelect" aria-describedby="resultHeading">
+            <option value="india" selected>India-only</option>
+            <option value="international">International</option>
+          </select>
+        </div>
+
+        <div class="region-wrap" aria-label="Traveler count selector">
+          <label for="travelerCount" class="label">Travelers</label>
+          <input id="travelerCount" type="number" min="1" step="1" value="1" />
+        </div>
+      </section>
+
+      <section id="results" class="results" aria-live="polite">
+        <h2 id="resultHeading">Recommended destinations</h2>
+        <p class="placeholder">Choose a month to view suggestions.</p>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
