@@ -1,42 +1,173 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trip Planner - Monthly Destination Suggestions</title>
+    <title>WanderHub - Your Ultimate Trip Planner</title>
     <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="app">
-      <section class="planner-card" aria-label="Trip month selector">
-        <h1>Trip Planner</h1>
-        <p>Select your travel month to see the best places to visit.</p>
-
-        <label for="monthSelect" class="label">Trip Month</label>
-        <select id="monthSelect" aria-describedby="resultHeading">
-          <option value="">-- Select a month --</option>
-        </select>
-
-        <div class="region-wrap" aria-label="Destination region selector">
-          <label for="regionSelect" class="label">Destination Type</label>
-          <select id="regionSelect" aria-describedby="resultHeading">
-            <option value="india" selected>India-only</option>
-            <option value="international">International</option>
-          </select>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">✈️</span>
+                <h1>WanderHub</h1>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">🌙</button>
         </div>
+    </header>
 
-        <div class="region-wrap" aria-label="Traveler count selector">
-          <label for="travelerCount" class="label">Travelers</label>
-          <input id="travelerCount" type="number" min="1" step="1" value="1" />
-        </div>
-      </section>
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="hero-title">Discover Your Next Adventure</h2>
+                <p class="hero-subtitle">Find the perfect destination based on when you want to travel</p>
+            </div>
+        </section>
 
-      <section id="results" class="results" aria-live="polite">
-        <h2 id="resultHeading">Recommended destinations</h2>
-        <p class="placeholder">Choose a month to view suggestions.</p>
-      </section>
+        <!-- Filters Section -->
+        <section class="filters-section">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="monthSelect" class="filter-label">📅 Travel Month</label>
+                    <select id="monthSelect">
+                        <option value="">Select a month...</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="regionSelect" class="filter-label">🌍 Travel Type</label>
+                    <select id="regionSelect">
+                        <option value="india">🇮🇳 India Only</option>
+                        <option value="international">🌐 International</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="travelerCount" class="filter-label">👥 Travelers</label>
+                    <input id="travelerCount" type="number" min="1" max="20" value="1" />
+                </div>
+
+                <div class="filter-group">
+                    <label for="budgetFilter" class="filter-label">💰 Budget Type</label>
+                    <select id="budgetFilter">
+                        <option value="">All Budgets</option>
+                        <option value="budget">Budget</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="luxury">Luxury</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="vibeFilter" class="filter-label">✨ Vibe</label>
+                    <select id="vibeFilter">
+                        <option value="">All Vibes</option>
+                        <option value="beach">🏖️ Beach Paradise</option>
+                        <option value="mountain">⛰️ Mountain Adventure</option>
+                        <option value="cultural">🏛️ Cultural Heritage</option>
+                        <option value="adventure">🚀 Adventure Seeker</option>
+                        <option value="relaxation">🧘 Relaxation</option>
+                    </select>
+                </div>
+
+                <button class="btn-reset" id="resetFilters">Reset Filters</button>
+            </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="stats-section" id="statsSection">
+            <div class="stat-card">
+                <div class="stat-number" id="destCount">0</div>
+                <div class="stat-label">Destinations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgTemp">--</div>
+                <div class="stat-label">Avg Temp</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="minBudget">--</div>
+                <div class="stat-label">Min Budget</div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results" class="results">
+            <div class="placeholder-state">
+                <div class="placeholder-icon">🗺️</div>
+                <h3>Start Exploring!</h3>
+                <p>Select a month and travel type to discover amazing destinations</p>
+            </div>
+        </section>
+
+        <!-- Favorites Section -->
+        <section id="favoritesSection" class="favorites-section hidden">
+            <h2>❤️ Your Favorites</h2>
+            <div id="favoritesList" class="destinations-grid"></div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <h2>What Travelers Love ❤️</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">"WanderHub helped me plan my perfect trip to Bali! The suggestions were spot-on."</div>
+                    <div class="testimonial-author">- Sarah M.</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">"I loved the budget breakdown and packing checklist. Made everything so easy!"</div>
+                    <div class="testimonial-author">- Raj K.</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">"The temperature and vibe filters helped me find exactly what I was looking for."</div>
+                    <div class="testimonial-author">- Emma L.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tips Section -->
+        <section class="tips-section">
+            <h2>💡 Travel Tips</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon">🎒</div>
+                    <h3>Best Seasons</h3>
+                    <p>Visit during shoulder seasons for fewer crowds and better prices.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">💳</div>
+                    <h3>Budget Smart</h3>
+                    <p>Our estimates include accommodation, food, and local transport.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">📱</div>
+                    <h3>Travel Info</h3>
+                    <p>Save your favorites and create your perfect trip itinerary.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">🌦️</div>
+                    <h3>Weather Check</h3>
+                    <p>Check local weather forecasts before packing your bags.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with ❤️ for wanderers • WanderHub © 2026</p>
+        </footer>
     </main>
 
+    <!-- Modal for Destination Details -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
-  </body>
+</body>
 </html>
