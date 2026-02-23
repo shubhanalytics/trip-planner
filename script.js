@@ -165,11 +165,95 @@ const dateDisplay = document.getElementById("dateDisplay");
 const timeDisplay = document.getElementById("timeDisplay");
 
 // ============================================
+// SOURCE CITATIONS MAPPING
+// ============================================
+const sourceMappings = {
+  // India - State Tourism Boards & Official Sources
+  "Jaipur, Rajasthan": "Rajasthan Tourism Board",
+  "Kochi, Kerala": "Kerala Tourism Board",
+  "Jaisalmer, Rajasthan": "Rajasthan Tourism Board",
+  "Goa": "Goa Tourism Board",
+  "Munnar, Kerala": "Kerala Tourism Board",
+  "Udaipur, Rajasthan": "Rajasthan Tourism Board",
+  "Pushkar, Rajasthan": "Rajasthan Tourism Board",
+  "Rishikesh, Uttarakhand": "Uttarakhand Tourism Board",
+  "Hampi, Karnataka": "Karnataka Tourism Board",
+  "Darjeeling, West Bengal": "West Bengal Tourism Board",
+  "Pondicherry, Tamil Nadu": "Puducherry Tourism",
+  "Mysore, Karnataka": "Karnataka Tourism Board",
+  "Coorg, Karnataka": "Karnataka Tourism Board",
+  "Ooty, Tamil Nadu": "Tamil Nadu Tourism",
+  "Shimla, Himachal Pradesh": "Himachal Pradesh Tourism",
+  "Kasol, Himachal Pradesh": "Himachal Pradesh Tourism",
+  "McLeodganj, Himachal Pradesh": "Himachal Pradesh Tourism",
+  "Shillong, Meghalaya": "Meghalaya Tourism Board",
+  "Manali, Himachal Pradesh": "Himachal Pradesh Tourism",
+  "Spiti Valley, Himachal Pradesh": "Himachal Pradesh Tourism",
+  "Palampur, Himachal Pradesh": "Himachal Pradesh Tourism",
+  "Ladakh, Jammu & Kashmir": "Ladakh Tourism Board",
+  "Valley of Flowers, Uttarakhand": "Uttarakhand Tourism Board",
+  "Tawang, Arunachal Pradesh": "Arunachal Pradesh Tourism",
+  "Kodaikanal, Tamil Nadu": "Tamil Nadu Tourism",
+  "Mahabaleshwar, Maharashtra": "Maharashtra Tourism Board",
+  "Lonavala, Maharashtra": "Maharashtra Tourism Board",
+  "Alleppey, Kerala": "Kerala Tourism Board",
+  "Khajuraho, Madhya Pradesh": "Madhya Pradesh Tourism",
+  "Polonnaruwa, Sri Lanka": "Sri Lanka Tourism Board",
+  "Ziro Valley, Arunachal Pradesh": "Arunachal Pradesh Tourism",
+  "Andaman Islands": "Andaman & Nicobar Tourism",
+  "Varanasi, Uttar Pradesh": "Uttar Pradesh Tourism",
+  "Rann of Kutch, Gujarat": "Gujarat Tourism Board",
+  "Amritsar, Punjab": "Punjab Tourism Board",
+  "Auli, Uttarakhand": "Uttarakhand Tourism Board",
+  
+  // International - Official National Tourism Boards
+  "Bali, Indonesia": "Indonesia Ministry of Tourism",
+  "Dubai, UAE": "Dubai Tourism",
+  "Phuket, Thailand": "Thailand Tourism Board",
+  "Maldives": "Maldives National Tourism",
+  "Tokyo, Japan": "Japan National Tourism Organization",
+  "Barcelona, Spain": "Spain Tourism Board",
+  "Singapore": "Singapore Tourism Board",
+  "Bangkok, Thailand": "Thailand Tourism Board",
+  "Kyoto, Japan": "Japan National Tourism Organization",
+  "Hanoi & Ha Long Bay, Vietnam": "Vietnam National Tourism Board",
+  "Paris, France": "France Tourism Board",
+  "Istanbul, Turkey": "Turkish Ministry of Tourism",
+  "Athens, Greece": "Greece Tourism Board",
+  "Amsterdam, Netherlands": "Netherlands Bureau for Tourism",
+  "Santorini, Greece": "Greece Tourism Board",
+  "Vienna, Austria": "Austria Tourism Board",
+  "Swiss Alps, Switzerland": "Switzerland Tourism",
+  "Reykjavik, Iceland": "Iceland Tourism Board",
+  "Edinburgh, Scotland": "Scotland Tourism Board",
+  "London, UK": "Visit Britain",
+  "Copenhagen, Denmark": "Denmark Tourism & Conferences",
+  "Venice, Italy": "Italy Tourism Board",
+  "Rome, Italy": "Italy Tourism Board",
+  "Sydney, Australia": "Tourism Australia",
+  "Berlin, Germany": "Germany Tourism Board",
+  "New York, USA": "NYC Tourism",
+  "Morocco - Marrakech": "Morocco Tourism Board",
+  "Mexico City, Mexico": "Mexico Tourism Board",
+  "Portugal - Lisbon": "Portugal Tourism",
+  "Abu Dhabi, UAE": "Abu Dhabi Tourism",
+  "Doha, Qatar": "Qatar Tourism",
+  "Cape Town, South Africa": "South Africa Tourism",
+  "Lapland, Finland": "Finland Tourism",
+  "Fiji Islands": "Fiji Tourism"
+};
+
+// ============================================
 // LOCAL STORAGE & PERSISTENCE
 // ============================================
 const FAVORITES_KEY = "wanderhub_favorites";
 const THEME_KEY = "wanderhub_theme";
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+
+// Helper function to get source citation
+function getSource(place) {
+  return sourceMappings[place] || "Travel Database";
+}
 
 // ============================================
 // INITIALIZATION
@@ -552,6 +636,7 @@ function showModal(dest) {
   const travelerCount = Number(travelerCountInput.value) || 1;
   const totalMin = formatInr(min * travelerCount);
   const totalMax = formatInr(max * travelerCount);
+  const source = getSource(dest.place);
   
   const vibesList = dest.vibes.map(v => {
     const vibeEmojis = { beach: "🏖️", mountain: "⛰️", cultural: "🏛️", adventure: "🚀", relaxation: "🧘", spiritual: "🙏" };
@@ -560,7 +645,8 @@ function showModal(dest) {
   
   modalBody.innerHTML = `
     <h2>${dest.place}</h2>
-    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">⭐ Rating: ${dest.rating}/5 | Best For: ${dest.bestFor}</p>
+    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">⭐ Rating: ${dest.rating}/5 | Best For: ${dest.bestFor}</p>
+    <p style="color: var(--accent-color); font-size: 0.9rem; margin-bottom: 1.5rem; font-style: italic;">📚 Source: ${source}</p>
     
     <h3>Overview</h3>
     <p style="color: var(--text-secondary);">${vibesList}</p>
@@ -603,7 +689,8 @@ function showModal(dest) {
       🍽️ Try local food for authentic experiences<br/>
       🎒 Pack according to mentioned climate<br/>
       📸 Visit during non-peak hours for better photos<br/>
-      🗺️ Use local transport to save money
+      🗺️ Use local transport to save money<br/>
+      ✅ Always verify current information with official sources
     </p>
   `;
   
