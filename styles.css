@@ -274,48 +274,68 @@ body {
 }
 
 .trust-badge {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--accent-primary);
-  background: rgba(102, 126, 234, 0.1);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  display: none;
 }
 
 .trust-cta {
-  padding: 0.55rem 1rem;
-  border-radius: 999px;
-  border: none;
-  font-weight: 600;
-  color: white;
-  background: var(--bg-gradient);
-  cursor: pointer;
-  transition: var(--transition);
-  flex: 0 0 auto;
-  white-space: nowrap;
-  min-width: fit-content;
-}
-
-.trust-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  display: none;
 }
 
 .trust-ghost {
-  padding: 0.55rem 1rem;
-  border-radius: 999px;
-  border: 1px solid var(--border-color);
-  font-weight: 600;
-  color: var(--text-primary);
-  background: transparent;
+  display: none;
+}
+
+/* Location Toggle */
+.location-toggle {
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  transition: var(--transition);
-  flex: 0 0 auto;
-  white-space: nowrap;
-  min-width: fit-content;
+  user-select: none;
+}
+
+.location-toggle input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 44px;
+  height: 24px;
+  background-color: var(--border-color);
+  border-radius: 12px;
+  position: relative;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.location-toggle input:checked + .toggle-slider {
+  background-color: var(--accent-primary);
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+}
+
+.location-toggle input:checked + .toggle-slider::before {
+  left: 22px;
+}
+
+.location-toggle input:disabled + .toggle-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.location-toggle:hover input:not(:disabled) + .toggle-slider {
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
 }
 
 .trust-ghost:hover {

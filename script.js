@@ -163,8 +163,7 @@ const locationModal = document.getElementById("locationModal");
 const locationModalClose = document.getElementById("locationModalClose");
 const allowLocationBtn = document.getElementById("allowLocation");
 const skipLocationBtn = document.getElementById("skipLocation");
-const enableLocationBtn = document.getElementById("enableLocationBtn");
-const clearLocationBtn = document.getElementById("clearLocationBtn");
+const locationToggle = document.getElementById("locationToggle");
 const locationStatusText = document.getElementById("locationStatusText");
 const locationMessage = document.getElementById("locationMessage");
 const favoritesSection = document.getElementById("favoritesSection");
@@ -432,13 +431,8 @@ function getNearbyRecommendations(destinations, count = 3) {
 function updateLocationStatusUI(isEnabled) {
   if (!locationStatusText) return;
   locationStatusText.textContent = isEnabled ? "📍 Location: Enabled" : "📍 Location: Not enabled";
-  if (enableLocationBtn) {
-    enableLocationBtn.textContent = isEnabled ? "Update Location" : "Enable Location";
-  }
-  if (clearLocationBtn) {
-    clearLocationBtn.disabled = !isEnabled;
-    clearLocationBtn.style.opacity = isEnabled ? "1" : "0.5";
-    clearLocationBtn.style.cursor = isEnabled ? "pointer" : "not-allowed";
+  if (locationToggle) {
+    locationToggle.checked = isEnabled;
   }
 }
 
@@ -531,11 +525,26 @@ function requestLocationAccess() {
   );
 }
 
+function handleLocationToggle(e) {
+  if (e.target.checked) {
+    // Toggle is ON - open modal to request location access
+    openLocationModal();
+  } else {
+    // Toggle is OFF - clear the location
+    userLocation = null;
+    localStorage.removeItem(LOCATION_KEY);
+    localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
+    updateLocationStatusUI(false);
+    handleLocationError("Location cleared. Enable it again for better estimates.");
+    setRegionRestriction(false);
+  }
+}
+
 function initLocationPrompt() {
   if (!locationModal) return;
 
-  if (enableLocationBtn) {
-    enableLocationBtn.addEventListener("click", openLocationModal);
+  if (locationToggle) {
+    locationToggle.addEventListener("change", handleLocationToggle);
   }
   if (allowLocationBtn) {
     allowLocationBtn.addEventListener("click", requestLocationAccess);
@@ -545,16 +554,6 @@ function initLocationPrompt() {
       localStorage.setItem(LOCATION_STATUS_KEY, "skipped");
       updateLocationStatusUI(false);
       closeLocationModal();
-    });
-  }
-  if (clearLocationBtn) {
-    clearLocationBtn.addEventListener("click", () => {
-      userLocation = null;
-      localStorage.removeItem(LOCATION_KEY);
-      localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
-      updateLocationStatusUI(false);
-      handleLocationError("Location cleared. Enable it again for better estimates.");
-      setRegionRestriction(false);
     });
   }
   if (locationModalClose) {
