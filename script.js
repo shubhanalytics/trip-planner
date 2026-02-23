@@ -255,6 +255,22 @@ function getSource(place) {
   return sourceMappings[place] || "Travel Database";
 }
 
+// Auto-scroll to results section
+function scrollToResults() {
+  const resultsSection = document.getElementById("results");
+  setTimeout(() => {
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 300);
+}
+
+// Auto-scroll to results
+function scrollToResults() {
+  const resultsSection = document.getElementById("results");
+  setTimeout(() => {
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 300);
+}
+
 // ============================================
 // INITIALIZATION
 // ============================================
@@ -478,13 +494,41 @@ function displayPlaceholder() {
 
 function displayDestinations(destinations, month, region, travelerCount) {
   if (!destinations.length) {
+    // Show fallback message with trusted alternatives
     results.innerHTML = `
-      <div class="placeholder-state">
-        <div class="placeholder-icon">😅</div>
-        <h3>No Destinations Found</h3>
-        <p>Try adjusting your filters</p>
+      <div class="placeholder-state error-state">
+        <div class="placeholder-icon">😢</div>
+        <h3>Oops! We're out of ideas for this combination</h3>
+        <p>We couldn't find destinations matching your filters, but don't worry!</p>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 1rem 0;">We're working hard to expand our database. In the meantime, check these trusted travel platforms:</p>
+        
+        <div class="trusted-platforms">
+          <a href="https://www.tripadvisor.com/" target="_blank" class="platform-card">
+            <div class="platform-icon">🌟</div>
+            <h4>TripAdvisor</h4>
+            <p>Real traveler reviews & recommendations</p>
+          </a>
+          <a href="https://www.booking.com/" target="_blank" class="platform-card">
+            <div class="platform-icon">🏨</div>
+            <h4>Booking.com</h4>
+            <p>Hotels & accommodations</p>
+          </a>
+          <a href="https://www.google.com/travel/" target="_blank" class="platform-card">
+            <div class="platform-icon">🗺️</div>
+            <h4>Google Travel</h4>
+            <p>Flights & trip planning</p>
+          </a>
+          <a href="https://www.airbnb.com/" target="_blank" class="platform-card">
+            <div class="platform-icon">🏠</div>
+            <h4>Airbnb</h4>
+            <p>Local experiences & stays</p>
+          </a>
+        </div>
+        
+        <p style="color: var(--accent-color); margin-top: 1.5rem; font-size: 0.85rem;">💡 Tip: Try adjusting your filters or check back soon for more destinations!</p>
       </div>
     `;
+    scrollToResults();
     return;
   }
   
@@ -492,10 +536,15 @@ function displayDestinations(destinations, month, region, travelerCount) {
   const heading = `<h2 style="text-align: center; margin-bottom: 2rem;">✨ Best places to visit in ${month} (${regionLabel})</h2>`;
   
   const cards = destinations
-    .map((dest) => createDestinationCard(dest, travelerCount))
+    .map((dest, index) => `
+      <div class="destination-card-wrapper" style="animation: slideUp 0.5s ease-out ${index * 0.08}s both;">
+        ${createDestinationCard(dest, travelerCount)}
+      </div>
+    `)
     .join("");
   
   results.innerHTML = `${heading}<div class="destinations-grid">${cards}</div>`;
+  scrollToResults();
   
   // Event listeners
   document.querySelectorAll(".btn-favorite").forEach((btn) => {
