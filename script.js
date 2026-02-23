@@ -336,6 +336,7 @@ const LOCATION_KEY = "wanderhub_location";
 const LOCATION_STATUS_KEY = "wanderhub_location_status";
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
 let userLocation = null;
+let isRegionRestricted = false;
 
 // Helper function to get source citation
 function getSource(place) {
@@ -441,6 +442,32 @@ function updateLocationStatusUI(isEnabled) {
   }
 }
 
+function setRegionRestriction(isRestricted, message) {
+  isRegionRestricted = isRestricted;
+  const applyBtn = document.getElementById("applyFilters");
+  if (applyBtn) {
+    applyBtn.disabled = isRestricted;
+    applyBtn.style.opacity = isRestricted ? "0.5" : "1";
+    applyBtn.style.cursor = isRestricted ? "not-allowed" : "pointer";
+  }
+
+  const inputs = [monthSelect, regionSelect, travelerCountInput, budgetFilter, vibeFilter];
+  inputs.forEach((input) => {
+    if (input) input.disabled = isRestricted;
+  });
+
+  if (isRestricted && results) {
+    results.innerHTML = `
+      <div class="placeholder-state error-state">
+        <div class="placeholder-icon">🚫</div>
+        <h3>Service Not Available in Your Region</h3>
+        <p>${message}</p>
+      </div>
+    `;
+    updateStats([]);
+  }
+}
+
 function openLocationModal() {
   if (locationModal) locationModal.classList.add("active");
 }
@@ -463,14 +490,28 @@ function requestLocationAccess() {
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
-      userLocation = {
+      const coords = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
         timestamp: new Date().toISOString()
       };
+      const isIndia = isInIndia(coords.latitude, coords.longitude);
+
+      if (!isIndia) {
+        userLocation = null;
+        localStorage.removeItem(LOCATION_KEY);
+        localStorage.setItem(LOCATION_STATUS_KEY, "blocked-region");
+        updateLocationStatusUI(false);
+        handleLocationError("Sorry, this service is currently available only within India. Please try again later.");
+        setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
+        return;
+      }
+
+      userLocation = coords;
       localStorage.setItem(LOCATION_KEY, JSON.stringify(userLocation));
       localStorage.setItem(LOCATION_STATUS_KEY, "allowed");
       updateLocationStatusUI(true);
+      setRegionRestriction(false);
       closeLocationModal();
     },
     () => {
@@ -505,6 +546,7 @@ function initLocationPrompt() {
       localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
       updateLocationStatusUI(false);
       handleLocationError("Location cleared. Enable it again for better estimates.");
+      setRegionRestriction(false);
     });
   }
   if (locationModalClose) {
@@ -519,6 +561,14 @@ function initLocationPrompt() {
     userLocation = JSON.parse(savedLocation);
   }
   updateLocationStatusUI(!!userLocation);
+
+  if (userLocation && !isInIndia(userLocation.latitude, userLocation.longitude)) {
+    userLocation = null;
+    localStorage.removeItem(LOCATION_KEY);
+    localStorage.setItem(LOCATION_STATUS_KEY, "blocked-region");
+    updateLocationStatusUI(false);
+    setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
+  }
 
   const status = localStorage.getItem(LOCATION_STATUS_KEY);
   if (status !== "allowed" && status !== "skipped") {
@@ -702,6 +752,10 @@ function resetAllFilters() {
 }
 
 function updateResults() {
+  if (isRegionRestricted) {
+    setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
+    return;
+  }
   const month = monthSelect.value;
   const region = regionSelect.value;
   const budget = budgetFilter.value;
