@@ -225,6 +225,20 @@ body {
   font-size: 1.2rem;
 }
 
+.music-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.music-prompt {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+  animation: glow 3s ease-in-out infinite;
+}
+
 .header-trust {
   max-width: 1400px;
   margin: 0 auto;
@@ -1293,6 +1307,10 @@ body.dark-mode .btn-favorite:hover {
     font-size: 1rem;
   }
 
+  .music-prompt {
+    display: none;
+  }
+
   .hero-title {
     font-size: 1.3rem;
   }
@@ -1413,12 +1431,13 @@ body.dark-mode .btn-favorite:hover {
   .testimonials-grid {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: none;
     gap: 1rem;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-primary) var(--bg-secondary);
     padding-bottom: 1rem;
+    scroll-behavior: smooth;
   }
 
   .testimonials-grid::-webkit-scrollbar {
@@ -1439,6 +1458,9 @@ body.dark-mode .btn-favorite:hover {
     min-width: 280px;
     scroll-snap-align: center;
     flex-shrink: 0;
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--accent-primary);
+    background: var(--card-bg);
   }
 
   .testimonial-card:hover {

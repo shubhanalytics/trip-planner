@@ -595,6 +595,32 @@ function init() {
   displayFavorites();
   updateDateAndTime();
   setInterval(updateDateAndTime, 1000); // Update time every second
+  initTestimonialsAutoScroll();
+}
+
+// ============================================
+// TESTIMONIALS AUTO-SCROLL (Mobile)
+// ============================================
+function initTestimonialsAutoScroll() {
+  const testimonialsGrid = document.querySelector('.testimonials-grid');
+  if (!testimonialsGrid) return;
+  
+  // Only enable auto-scroll on mobile devices
+  if (window.innerWidth <= 480) {
+    let scrollPosition = 0;
+    const scrollSpeed = 1; // pixels per interval
+    const scrollInterval = 50; // milliseconds
+    
+    setInterval(() => {
+      scrollPosition += scrollSpeed;
+      testimonialsGrid.scrollLeft = scrollPosition;
+      
+      // Reset to beginning when reaching the end
+      if (scrollPosition >= testimonialsGrid.scrollWidth - testimonialsGrid.clientWidth) {
+        scrollPosition = 0;
+      }
+    }, scrollInterval);
+  }
 }
 
 // ============================================
@@ -1169,3 +1195,9 @@ musicToggle.addEventListener("click", () => {
 // START APPLICATION
 // ============================================
 init();
+
+// Auto-reset location on page refresh/exit
+window.addEventListener("beforeunload", () => {
+  localStorage.removeItem(LOCATION_KEY);
+  localStorage.removeItem(LOCATION_STATUS_KEY);
+});
