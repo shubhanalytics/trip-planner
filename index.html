@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WanderHub - Your Ultimate Trip Planner</title>
+    <title>WanderHub - Smart Travel Insights by Month</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
 </head>
@@ -44,7 +44,7 @@
             <div class="trust-actions">
                 <span class="trust-status" id="locationStatusText">📍 Location: Not enabled</span>
                 <label class="location-toggle">
-                    <input type="checkbox" id="locationToggle" />
+                    <input type="checkbox" id="locationToggle" aria-label="Enable location" title="Enable location" />
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -55,16 +55,49 @@
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
-                <h2 class="hero-title">Discover Your Next Adventure</h2>
-                <p class="hero-subtitle">Find the perfect destination based on when you want to travel</p>
+                <h2 class="hero-title">Travel Smarter, Not Randomly</h2>
+                <p class="hero-subtitle">Your decision layer for travel: discover where to go, when it works best, and what fits your style—before you spend.</p>
+                <div class="hero-tags" aria-label="WanderHub value tags">
+                    <span class="hero-tag">📊 Data-backed suggestions</span>
+                    <span class="hero-tag">🧭 No booking pressure</span>
+                    <span class="hero-tag">🧠 Clear decision support</span>
+                </div>
             </div>
         </section>
 
+        <section class="quick-start" id="quickStart">
+            <h2>First-time here? Get clarity in 30 seconds</h2>
+            <div class="quick-start-grid">
+                <article class="quick-step">
+                    <span class="quick-step-number">1</span>
+                    <h3>Choose your travel window</h3>
+                    <p>Select your travel window first. Weather and destination relevance depend on season.</p>
+                </article>
+                <article class="quick-step">
+                    <span class="quick-step-number">2</span>
+                    <h3>Match your travel mood</h3>
+                    <p>Filter by beach, mountain, cultural, adventure, or relaxation to match your travel mood.</p>
+                </article>
+                <article class="quick-step">
+                    <span class="quick-step-number">3</span>
+                    <h3>Build a confident shortlist</h3>
+                    <p>Save favorites, compare practical details, then plan your trip externally on any platform you trust.</p>
+                </article>
+            </div>
+        </section>
+
+        <nav class="section-tabs" aria-label="Page sections">
+            <button class="section-tab active" data-target="filtersSectionBlock">Trip Explorer</button>
+            <button class="section-tab" data-target="results">Destination Intelligence</button>
+            <button class="section-tab" data-target="favoritesSection">Your Shortlist</button>
+            <button class="section-tab" data-target="tipsSection">Travel IQ</button>
+        </nav>
+
         <!-- Filters Section -->
-        <section class="filters-section">
+        <section class="filters-section" id="filtersSectionBlock">
             <div class="filters-container">
                 <div class="filter-group">
-                    <label for="monthSelect" class="filter-label">📅 Travel Month</label>
+                    <label for="monthSelect" class="filter-label">📅 Best Month to Travel</label>
                     <select id="monthSelect">
                         <option value="">Select a month...</option>
                     </select>
@@ -79,7 +112,7 @@
                 </div>
 
                 <div class="filter-group">
-                    <label for="travelerCount" class="filter-label">👥 Travelers</label>
+                    <label for="travelerCount" class="filter-label">👥 Group Size (for estimates)</label>
                     <div class="traveler-stepper">
                         <button class="stepper-btn" id="decreaseTravelers" aria-label="Decrease travelers">−</button>
                         <input id="travelerCount" type="number" min="1" max="30" value="1" readonly />
@@ -88,7 +121,7 @@
                 </div>
 
                 <div class="filter-group">
-                    <label for="budgetFilter" class="filter-label">💰 Budget Type</label>
+                    <label for="budgetFilter" class="filter-label">💰 Budget Style</label>
                     <select id="budgetFilter">
                         <option value="">All Budgets</option>
                         <option value="budget">Budget</option>
@@ -110,7 +143,7 @@
                 </div>
 
                 <div class="filter-actions">
-                    <button class="btn-apply" id="applyFilters">🔍 Apply Filters</button>
+                    <button class="btn-apply" id="applyFilters">🔍 Generate Smart Picks</button>
                     <button class="btn-reset" id="resetFilters">↻ Reset</button>
                 </div>
             </div>
@@ -118,22 +151,22 @@
 
         <!-- Data Accuracy Notice -->
         <section class="data-notice">
-            <p><strong>ℹ️ Data Transparency:</strong> Our destination suggestions are based on verified travel data from official tourism boards and popular travel platforms. Prices vary by season & availability. Always verify current details (weather, prices, events) before booking. Real-time API integration coming soon!</p>
+            <p><strong>ℹ️ Data Transparency:</strong> WanderHub is an informational platform, not a ticketing or booking service. Suggestions are based on verified tourism sources and practical travel trends. Use this to compare options with confidence, then book anywhere you prefer.</p>
         </section>
 
         <!-- Quick Stats -->
         <section class="stats-section" id="statsSection">
             <div class="stat-card">
                 <div class="stat-number" id="destCount">0</div>
-                <div class="stat-label">Destinations</div>
+                <div class="stat-label">Smart Matches</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="avgTemp">--</div>
-                <div class="stat-label">Avg Temp</div>
+                <div class="stat-label">Typical Temp</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="minBudget">--</div>
-                <div class="stat-label">Min Budget</div>
+                <div class="stat-label">Starting Budget</div>
             </div>
         </section>
 
@@ -141,8 +174,8 @@
         <section id="results" class="results">
             <div class="placeholder-state">
                 <div class="placeholder-icon">🗺️</div>
-                <h3>Start Exploring!</h3>
-                <p>Select a month and travel type to discover amazing destinations</p>
+                <h3>Ready to discover your best-fit trip?</h3>
+                <p>Choose month, trip type, and vibe to unlock data-backed destination ideas.</p>
             </div>
         </section>
 
@@ -154,53 +187,53 @@
 
         <!-- Testimonials -->
         <section class="testimonials">
-            <h2>What Travelers Love ❤️</h2>
+            <h2>Why Explorers Keep Coming Back ❤️</h2>
             <div class="testimonials-grid">
                 <div class="testimonial-card">
-                    <div class="testimonial-text">"WanderHub helped me plan my perfect trip to Bali! The suggestions were spot-on."</div>
+                    <div class="testimonial-text">"The monthly suggestions were practical and easy to compare. I made a shortlist in minutes."</div>
                     <div class="testimonial-author">- Sarah M.</div>
                 </div>
                 <div class="testimonial-card">
-                    <div class="testimonial-text">"I loved the budget breakdown and packing checklist. Made everything so easy!"</div>
+                    <div class="testimonial-text">"I finally understood what fit my budget before I started opening ten different tabs."</div>
                     <div class="testimonial-author">- Raj K.</div>
                 </div>
                 <div class="testimonial-card">
-                    <div class="testimonial-text">"The temperature and vibe filters helped me find exactly what I was looking for."</div>
+                    <div class="testimonial-text">"The vibe and weather filters helped me choose a destination that actually matched my mood."</div>
                     <div class="testimonial-author">- Emma L.</div>
                 </div>
             </div>
         </section>
 
         <!-- Tips Section -->
-        <section class="tips-section">
-            <h2>💡 Travel Tips</h2>
+        <section class="tips-section" id="tipsSection">
+            <h2>💡 Travel IQ Essentials</h2>
             <div class="tips-grid">
                 <div class="tip-card">
                     <div class="tip-icon">🎒</div>
                     <h3>Best Seasons</h3>
-                    <p>Visit during shoulder seasons for fewer crowds and better prices.</p>
+                    <p>Shoulder seasons often give you better value, lighter crowds, and smoother experiences.</p>
                 </div>
                 <div class="tip-card">
                     <div class="tip-icon">💳</div>
                     <h3>Budget Smart</h3>
-                    <p>Our estimates include accommodation, food, and local transport.</p>
+                    <p>Use estimates as a planning baseline for stay, food, and local transport.</p>
                 </div>
                 <div class="tip-card">
                     <div class="tip-icon">📱</div>
-                    <h3>Travel Info</h3>
-                    <p>Save your favorites and create your perfect trip itinerary.</p>
+                    <h3>Research Flow</h3>
+                    <p>Research and compare here first, then complete bookings on your preferred platforms.</p>
                 </div>
                 <div class="tip-card">
                     <div class="tip-icon">🌦️</div>
                     <h3>Weather Check</h3>
-                    <p>Check local weather forecasts before packing your bags.</p>
+                    <p>Validate current weather and events before finalizing your destination choice.</p>
                 </div>
             </div>
         </section>
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Made with ❤️ for wanderers • WanderHub © 2026</p>
+            <p>Made with ❤️ for curious explorers • WanderHub © 2026 • Travel intelligence for better decisions, not bookings.</p>
         </footer>
     </main>
 

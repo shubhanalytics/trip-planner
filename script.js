@@ -170,6 +170,7 @@ const favoritesSection = document.getElementById("favoritesSection");
 const favoritesList = document.getElementById("favoritesList");
 const dateDisplay = document.getElementById("dateDisplay");
 const timeDisplay = document.getElementById("timeDisplay");
+const sectionTabs = document.querySelectorAll(".section-tab");
 
 // ============================================
 // SOURCE CITATIONS MAPPING
@@ -602,11 +603,70 @@ function init() {
   loadMonths();
   loadTheme();
   setupEventListeners();
+  initSectionTabs();
+  syncStickyOffset();
   initLocationPrompt();
   displayFavorites();
   updateDateAndTime();
   setInterval(updateDateAndTime, 1000); // Update time every second
   initTestimonialsAutoScroll();
+}
+
+function syncStickyOffset() {
+  const header = document.querySelector(".header");
+  if (!header) return;
+
+  const updateOffset = () => {
+    const offset = Math.round(header.getBoundingClientRect().height + 8);
+    document.documentElement.style.setProperty("--sticky-offset", `${offset}px`);
+  };
+
+  updateOffset();
+  window.addEventListener("resize", updateOffset);
+  window.addEventListener("orientationchange", updateOffset);
+  window.addEventListener("load", () => requestAnimationFrame(updateOffset));
+}
+
+function initSectionTabs() {
+  if (!sectionTabs.length) return;
+
+  sectionTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const targetId = tab.dataset.target;
+      const targetElement = document.getElementById(targetId);
+      if (!targetElement) return;
+
+      sectionTabs.forEach((item) => item.classList.remove("active"));
+      tab.classList.add("active");
+      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  const observedSectionIds = ["filtersSectionBlock", "results", "favoritesSection", "tipsSection"];
+  const observedSections = observedSectionIds
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+
+  if (!observedSections.length || !("IntersectionObserver" in window)) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+    if (!visible) return;
+
+    const activeId = visible.target.id;
+    sectionTabs.forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.target === activeId);
+    });
+  }, {
+    root: null,
+    threshold: [0.2, 0.4, 0.6],
+    rootMargin: "-100px 0px -45% 0px"
+  });
+
+  observedSections.forEach((section) => observer.observe(section));
 }
 
 // ============================================
@@ -617,11 +677,12 @@ function initTestimonialsAutoScroll() {
   if (!testimonialsGrid) return;
   
   let autoScrollInterval;
+  const shouldAutoScroll = false;
   
   function startAutoScroll() {
     if (autoScrollInterval) clearInterval(autoScrollInterval);
     
-    if (window.innerWidth <= 480) {
+    if (window.innerWidth <= 480 && shouldAutoScroll) {
       let scrollSpeed = 1;
       
       autoScrollInterval = setInterval(() => {
@@ -905,8 +966,8 @@ function displayPlaceholder() {
   results.innerHTML = `
     <div class="placeholder-state">
       <div class="placeholder-icon">🗺️</div>
-      <h3>Start Exploring!</h3>
-      <p>Select a month and travel type to discover amazing destinations</p>
+      <h3>Ready to discover your best-fit trip?</h3>
+      <p>Choose month, trip type, and vibe to unlock data-backed destination ideas.</p>
     </div>
   `;
 }
@@ -930,38 +991,38 @@ function displayDestinations(destinations, month, region, travelerCount, notice 
       `
       : "";
 
-    // Show fallback message with trusted alternatives
+    // Show fallback message with trusted informational alternatives
     results.innerHTML = `
       <div class="placeholder-state error-state">
         <div class="placeholder-icon">😢</div>
-        <h3>Oops! We're out of ideas for this combination</h3>
-        <p>We couldn't find destinations matching your filters, but don't worry!</p>
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 1rem 0;">We're working hard to expand our database. In the meantime, check these trusted travel platforms:</p>
+        <h3>No strong matches for this combination yet</h3>
+        <p>We couldn't find reliable matches for your exact filters this time.</p>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 1rem 0;">While we expand our dataset, use these trusted resources for destination research:</p>
         
         <div class="trusted-platforms">
-          <a href="https://www.tripadvisor.com/" target="_blank" class="platform-card">
-            <div class="platform-icon">🌟</div>
-            <h4>TripAdvisor</h4>
-            <p>Real traveler reviews & recommendations</p>
+          <a href="https://www.lonelyplanet.com" target="_blank" rel="noopener noreferrer" class="platform-card">
+            <div class="platform-icon">📚</div>
+            <h4>Lonely Planet</h4>
+            <p>Destination guides and local context</p>
           </a>
-          <a href="https://www.booking.com/" target="_blank" class="platform-card">
-            <div class="platform-icon">🏨</div>
-            <h4>Booking.com</h4>
-            <p>Hotels & accommodations</p>
+          <a href="https://www.nationalgeographic.com/travel" target="_blank" rel="noopener noreferrer" class="platform-card">
+            <div class="platform-icon">🌍</div>
+            <h4>NatGeo Travel</h4>
+            <p>In-depth stories and travel inspiration</p>
           </a>
-          <a href="https://www.google.com/travel/" target="_blank" class="platform-card">
-            <div class="platform-icon">🗺️</div>
-            <h4>Google Travel</h4>
-            <p>Flights & trip planning</p>
+          <a href="https://www.weather.com" target="_blank" rel="noopener noreferrer" class="platform-card">
+            <div class="platform-icon">🌦️</div>
+            <h4>Weather.com</h4>
+            <p>Seasonal weather context before travel</p>
           </a>
-          <a href="https://www.airbnb.com/" target="_blank" class="platform-card">
-            <div class="platform-icon">🏠</div>
-            <h4>Airbnb</h4>
-            <p>Local experiences & stays</p>
+          <a href="https://www.unwto.org/tourism-data" target="_blank" rel="noopener noreferrer" class="platform-card">
+            <div class="platform-icon">📈</div>
+            <h4>UN Tourism Data</h4>
+            <p>Global tourism trends and reports</p>
           </a>
         </div>
         
-        <p style="color: var(--accent-color); margin-top: 1.5rem; font-size: 0.85rem;">💡 Tip: Try adjusting your filters or check back soon for more destinations!</p>
+        <p style="color: var(--accent-color); margin-top: 1.5rem; font-size: 0.85rem;">💡 Tip: Widen one filter at a time for better-quality matches.</p>
       </div>
       ${suggestionsHtml}
     `;
@@ -970,7 +1031,7 @@ function displayDestinations(destinations, month, region, travelerCount, notice 
   }
   
   const regionLabel = region === "india" ? "🇮🇳 India" : "🌐 International";
-  const heading = `<h2 style="text-align: center; margin-bottom: 2rem;">✨ Best places to visit in ${month} (${regionLabel})</h2>`;
+  const heading = `<h2 style="text-align: center; margin-bottom: 2rem;">✨ Best-fit destination intelligence for ${month} (${regionLabel})</h2>`;
   const noticeHtml = notice ? `<div class="results-notice">${notice}</div>` : "";
   const enrichedDestinations = destinations.map(dest => ({ ...dest, region }));
   
