@@ -592,8 +592,26 @@ function initLocationPrompt() {
 function scrollToResults() {
   const resultsSection = document.getElementById("results");
   setTimeout(() => {
-    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToSection(resultsSection);
   }, 300);
+}
+
+function getStickyOffset() {
+  const cssOffset = Number.parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue("--sticky-offset"),
+    10
+  );
+  if (!Number.isNaN(cssOffset) && cssOffset > 0) return cssOffset;
+
+  const header = document.querySelector(".header");
+  return header ? Math.round(header.getBoundingClientRect().height + 8) : 96;
+}
+
+function scrollToSection(element) {
+  if (!element) return;
+  const offset = getStickyOffset() + 10;
+  const targetY = window.scrollY + element.getBoundingClientRect().top - offset;
+  window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
 }
 
 // ============================================
@@ -633,12 +651,18 @@ function initSectionTabs() {
   sectionTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const targetId = tab.dataset.target;
-      const targetElement = document.getElementById(targetId);
+      let targetElement = document.getElementById(targetId);
+
+      if (targetId === "favoritesSection" && favorites.length === 0) {
+        displayFavorites();
+        targetElement = document.getElementById("favoritesSection");
+      }
+
       if (!targetElement) return;
 
       sectionTabs.forEach((item) => item.classList.remove("active"));
       tab.classList.add("active");
-      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToSection(targetElement);
     });
   });
 
@@ -649,24 +673,36 @@ function initSectionTabs() {
 
   if (!observedSections.length || !("IntersectionObserver" in window)) return;
 
-  const observer = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+  let observer;
 
-    if (!visible) return;
+  const setupObserver = () => {
+    if (observer) observer.disconnect();
 
-    const activeId = visible.target.id;
-    sectionTabs.forEach((tab) => {
-      tab.classList.toggle("active", tab.dataset.target === activeId);
+    const topMargin = -(getStickyOffset() + 16);
+
+    observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!visible) return;
+
+      const activeId = visible.target.id;
+      sectionTabs.forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.target === activeId);
+      });
+    }, {
+      root: null,
+      threshold: [0.15, 0.35, 0.6],
+      rootMargin: `${topMargin}px 0px -45% 0px`
     });
-  }, {
-    root: null,
-    threshold: [0.2, 0.4, 0.6],
-    rootMargin: "-100px 0px -45% 0px"
-  });
 
-  observedSections.forEach((section) => observer.observe(section));
+    observedSections.forEach((section) => observer.observe(section));
+  };
+
+  setupObserver();
+  window.addEventListener("resize", setupObserver);
+  window.addEventListener("orientationchange", setupObserver);
 }
 
 // ============================================
@@ -1146,7 +1182,14 @@ function toggleFavorite(place, btn) {
 
 function displayFavorites() {
   if (!favorites.length) {
-    favoritesSection.classList.add("hidden");
+    favoritesSection.classList.remove("hidden");
+    favoritesList.innerHTML = `
+      <div class="placeholder-state">
+        <div class="placeholder-icon">🤍</div>
+        <h3>Your shortlist is empty</h3>
+        <p>Tap save on any destination card to build your personal shortlist.</p>
+      </div>
+    `;
     return;
   }
   
