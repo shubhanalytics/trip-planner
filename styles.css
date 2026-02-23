@@ -197,6 +197,34 @@ body {
   gap: 1.5rem;
 }
 
+.music-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-gradient);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.music-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.music-toggle.playing {
+  animation: pulse 2s infinite;
+}
+
+.music-icon {
+  font-size: 1.2rem;
+}
+
 .header-trust {
   max-width: 1400px;
   margin: 0 auto;
@@ -465,6 +493,70 @@ select:focus, input[type="number"]:focus {
   box-shadow: 0 0 0 3px var(--accent-light);
 }
 
+/* Traveler Stepper */
+.traveler-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.stepper-btn {
+  width: 40px;
+  height: 44px;
+  background: var(--accent-primary);
+  color: white;
+  border: 2px solid var(--accent-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.stepper-btn:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.stepper-btn:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: scale(1.05);
+}
+
+.stepper-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.stepper-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.traveler-stepper input[type="number"] {
+  width: 60px;
+  text-align: center;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  background: var(--card-bg);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  cursor: default;
+}
+
+.traveler-stepper input[type="number"]::-webkit-inner-spin-button,
+.traveler-stepper input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .btn-reset {
   padding: 0.75rem 1.5rem;
   background: var(--bg-secondary);
@@ -475,6 +567,7 @@ select:focus, input[type="number"]:focus {
   cursor: pointer;
   transition: var(--transition);
   font-size: 0.95rem;
+  min-width: 140px;
 }
 
 .btn-reset:hover {
@@ -497,6 +590,7 @@ select:focus, input[type="number"]:focus {
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
+  min-width: 140px;
 }
 
 .btn-apply:hover:not(:disabled) {
@@ -799,12 +893,18 @@ body.dark-mode .btn-favorite:hover {
   padding: 3rem 2rem;
   margin-bottom: 3rem;
   box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
 .testimonials h2 {
   text-align: center;
   margin-bottom: 2rem;
   font-size: 1.75rem;
+}
+
+.testimonials-container {
+  overflow: hidden;
+  position: relative;
 }
 
 .testimonials-grid {
@@ -1311,7 +1411,38 @@ body.dark-mode .btn-favorite:hover {
   }
 
   .testimonials-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-primary) var(--bg-secondary);
+    padding-bottom: 1rem;
+  }
+
+  .testimonials-grid::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .testimonials-grid::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+  }
+
+  .testimonials-grid::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 10px;
+  }
+
+  .testimonial-card {
+    min-width: 280px;
+    scroll-snap-align: center;
+    flex-shrink: 0;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-5px);
   }
 
   .tips-grid {

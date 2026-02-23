@@ -639,6 +639,24 @@ function setupEventListeners() {
   // Theme selector - immediate change
   themeSelect.addEventListener("change", changeTheme);
   
+  // Traveler count stepper buttons
+  const increaseBtn = document.getElementById("increaseTravelers");
+  const decreaseBtn = document.getElementById("decreaseTravelers");
+  
+  increaseBtn.addEventListener("click", () => {
+    let current = parseInt(travelerCountInput.value);
+    if (current < 30) {
+      travelerCountInput.value = current + 1;
+    }
+  });
+  
+  decreaseBtn.addEventListener("click", () => {
+    let current = parseInt(travelerCountInput.value);
+    if (current > 1) {
+      travelerCountInput.value = current - 1;
+    }
+  });
+  
   // Modal close
   if (modalClose) {
     modalClose.addEventListener("click", closeModal);
@@ -1124,6 +1142,28 @@ function showModal(dest) {
 function closeModal() {
   modal.classList.remove("active");
 }
+
+// ============================================
+// MUSIC PLAYER
+// ============================================
+const musicToggle = document.getElementById("musicToggle");
+const backgroundMusic = new Audio("yun-hi-chala-chal-raahi.mp3");
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.3;
+let isPlaying = false;
+
+musicToggle.addEventListener("click", () => {
+  if (isPlaying) {
+    backgroundMusic.pause();
+    musicToggle.classList.remove("playing");
+    musicToggle.querySelector(".music-text").textContent = "Music";
+  } else {
+    backgroundMusic.play();
+    musicToggle.classList.add("playing");
+    musicToggle.querySelector(".music-text").textContent = "Pause";
+  }
+  isPlaying = !isPlaying;
+});
 
 // ============================================
 // START APPLICATION

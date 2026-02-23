@@ -16,6 +16,10 @@
                 <h1>WanderHub</h1>
             </div>
             <div class="header-right">
+                <button class="music-toggle" id="musicToggle" title="Play/Pause music">
+                    <span class="music-icon">🎵</span>
+                    <span class="music-text">Music</span>
+                </button>
                 <div class="datetime" id="datetime">
                     <div class="date-display" id="dateDisplay"></div>
                     <div class="time-display" id="timeDisplay"></div>
@@ -76,7 +80,11 @@
 
                 <div class="filter-group">
                     <label for="travelerCount" class="filter-label">👥 Travelers</label>
-                    <input id="travelerCount" type="number" min="1" max="20" value="1" />
+                    <div class="traveler-stepper">
+                        <button class="stepper-btn" id="decreaseTravelers" aria-label="Decrease travelers">−</button>
+                        <input id="travelerCount" type="number" min="1" max="30" value="1" readonly />
+                        <button class="stepper-btn" id="increaseTravelers" aria-label="Increase travelers">+</button>
+                    </div>
                 </div>
 
                 <div class="filter-group">
