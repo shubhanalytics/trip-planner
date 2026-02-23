@@ -1308,24 +1308,61 @@ function closeModal() {
 // ============================================
 // MUSIC PLAYER
 // ============================================
-const musicToggle = document.getElementById("musicToggle");
+const musicPlayer = document.getElementById("musicPlayer");
+const musicPlayBtn = document.getElementById("musicPlay");
+const musicPauseBtn = document.getElementById("musicPause");
+const musicStatus = document.getElementById("musicStatus");
+const musicTrackName = document.getElementById("musicTrackName");
 const backgroundMusic = new Audio("Yun Hi Chala Chal-raahi.mp3");
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.3;
-let isPlaying = false;
 
-musicToggle.addEventListener("click", () => {
-  if (isPlaying) {
-    backgroundMusic.pause();
-    musicToggle.classList.remove("playing");
-    musicToggle.querySelector(".music-text").textContent = "Music";
-  } else {
-    backgroundMusic.play();
-    musicToggle.classList.add("playing");
-    musicToggle.querySelector(".music-text").textContent = "Pause";
+function updateMusicUI(isPlaying, statusLabel = "") {
+  if (musicPlayer) {
+    musicPlayer.classList.toggle("playing", isPlaying);
   }
-  isPlaying = !isPlaying;
-});
+  if (musicPlayBtn) {
+    musicPlayBtn.disabled = isPlaying;
+  }
+  if (musicPauseBtn) {
+    musicPauseBtn.disabled = !isPlaying;
+  }
+  if (musicStatus) {
+    musicStatus.textContent = statusLabel || (isPlaying ? "Playing" : "Paused");
+  }
+}
+
+async function playBackgroundMusic() {
+  try {
+    await backgroundMusic.play();
+    updateMusicUI(true, "Playing");
+  } catch {
+    updateMusicUI(false, "Tap Play");
+  }
+}
+
+function pauseBackgroundMusic() {
+  backgroundMusic.pause();
+  updateMusicUI(false, "Paused");
+}
+
+if (musicTrackName) {
+  musicTrackName.textContent = "Yun Hi Chala Chal";
+}
+
+if (musicPlayBtn) {
+  musicPlayBtn.addEventListener("click", playBackgroundMusic);
+}
+
+if (musicPauseBtn) {
+  musicPauseBtn.addEventListener("click", pauseBackgroundMusic);
+}
+
+backgroundMusic.addEventListener("play", () => updateMusicUI(true, "Playing"));
+backgroundMusic.addEventListener("pause", () => updateMusicUI(false, "Paused"));
+backgroundMusic.addEventListener("error", () => updateMusicUI(false, "Unavailable"));
+
+updateMusicUI(false, "Paused");
 
 // ============================================
 // START APPLICATION

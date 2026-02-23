@@ -16,10 +16,19 @@
                 <h1>WanderHub</h1>
             </div>
             <div class="header-right">
-                <button class="music-toggle" id="musicToggle" title="Play/Pause music">
-                    <span class="music-icon">🎵</span>
-                    <span class="music-text">Music</span>
-                </button>
+                <div class="music-player" id="musicPlayer" aria-label="Background music controls">
+                    <div class="music-track">
+                        <span class="music-icon" aria-hidden="true">🎵</span>
+                        <div class="music-meta">
+                            <span class="music-track-name" id="musicTrackName">Yun Hi Chala Chal</span>
+                            <span class="music-status" id="musicStatus">Paused</span>
+                        </div>
+                    </div>
+                    <div class="music-actions">
+                        <button class="music-btn music-btn-play" id="musicPlay" title="Play music" aria-label="Play music">▶ Play</button>
+                        <button class="music-btn music-btn-pause" id="musicPause" title="Pause music" aria-label="Pause music">⏸ Pause</button>
+                    </div>
+                </div>
                 <div class="datetime" id="datetime">
                     <div class="date-display" id="dateDisplay"></div>
                     <div class="time-display" id="timeDisplay"></div>
