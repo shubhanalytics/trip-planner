@@ -141,6 +141,7 @@ body {
   color: var(--text-primary);
   transition: var(--transition);
   overflow-x: hidden;
+  overflow-y: visible;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -467,6 +468,7 @@ body {
   margin: 0 auto;
   padding: 2rem 1.5rem;
   position: relative;
+  overflow: visible;
 }
 
 /* Hero Section */
@@ -607,14 +609,13 @@ body {
 }
 
 .section-tabs {
-  position: sticky;
+  position: fixed;
   top: var(--sticky-offset, 92px);
-  z-index: 90;
   left: 0;
   right: 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-top: 1.25rem;
+  z-index: 90;
+  width: 100%;
+  margin: 0;
   padding: 0.75rem 1.5rem;
   display: flex;
   gap: 0.6rem;
@@ -657,6 +658,9 @@ body {
   scroll-margin-top: 140px;
 }
 
+.section-tabs + .filters-section {
+  margin-top: 6rem;
+}
 
 /* Filters Section */
 .filters-section {
