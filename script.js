@@ -158,7 +158,14 @@ const statsSection = document.getElementById("statsSection");
 const themeSelect = document.getElementById("themeSelect");
 const modal = document.getElementById("detailsModal");
 const modalBody = document.getElementById("modalBody");
-const modalClose = document.querySelector(".modal-close");
+const modalClose = modal ? modal.querySelector(".modal-close") : null;
+const locationModal = document.getElementById("locationModal");
+const locationModalClose = document.getElementById("locationModalClose");
+const allowLocationBtn = document.getElementById("allowLocation");
+const skipLocationBtn = document.getElementById("skipLocation");
+const enableLocationBtn = document.getElementById("enableLocationBtn");
+const locationStatusText = document.getElementById("locationStatusText");
+const locationMessage = document.getElementById("locationMessage");
 const favoritesSection = document.getElementById("favoritesSection");
 const favoritesList = document.getElementById("favoritesList");
 const dateDisplay = document.getElementById("dateDisplay");
@@ -248,22 +255,130 @@ const sourceMappings = {
 // ============================================
 const FAVORITES_KEY = "wanderhub_favorites";
 const THEME_KEY = "wanderhub_theme";
+const LOCATION_KEY = "wanderhub_location";
+const LOCATION_STATUS_KEY = "wanderhub_location_status";
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+let userLocation = null;
 
 // Helper function to get source citation
 function getSource(place) {
   return sourceMappings[place] || "Travel Database";
 }
 
-// Auto-scroll to results section
-function scrollToResults() {
-  const resultsSection = document.getElementById("results");
-  setTimeout(() => {
-    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 300);
+function isInIndia(latitude, longitude) {
+  return latitude >= 6 && latitude <= 37.5 && longitude >= 68 && longitude <= 97.5;
 }
 
-// Auto-scroll to results
+function estimateTravelCost(dest) {
+  if (!userLocation) return null;
+
+  const userInIndia = isInIndia(userLocation.latitude, userLocation.longitude);
+  const destRegion = dest.region || "india";
+  const travelModes = (dest.travel || "").toLowerCase();
+  let range = { min: 1000, max: 10000 };
+
+  if (destRegion === "international") {
+    range = userInIndia ? { min: 20000, max: 120000 } : { min: 15000, max: 100000 };
+  } else if (!userInIndia) {
+    range = { min: 20000, max: 120000 };
+  } else if (travelModes.includes("flight")) {
+    range = { min: 3000, max: 15000 };
+  } else if (travelModes.includes("train")) {
+    range = { min: 500, max: 6000 };
+  } else if (travelModes.includes("bus")) {
+    range = { min: 300, max: 3500 };
+  } else if (travelModes.includes("bike") || travelModes.includes("cab") || travelModes.includes("car")) {
+    range = { min: 1500, max: 8000 };
+  }
+
+  return `${formatInr(range.min)} - ${formatInr(range.max)} (estimate)`;
+}
+
+function updateLocationStatusUI(isEnabled) {
+  if (!locationStatusText) return;
+  locationStatusText.textContent = isEnabled ? "📍 Location: Enabled" : "📍 Location: Not enabled";
+  if (enableLocationBtn) {
+    enableLocationBtn.textContent = isEnabled ? "Update Location" : "Enable Location";
+  }
+}
+
+function openLocationModal() {
+  if (locationModal) locationModal.classList.add("active");
+}
+
+function closeLocationModal() {
+  if (locationModal) locationModal.classList.remove("active");
+}
+
+function handleLocationError(message) {
+  if (locationMessage) {
+    locationMessage.textContent = message;
+  }
+}
+
+function requestLocationAccess() {
+  if (!navigator.geolocation) {
+    handleLocationError("Location services are not available in this browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem(LOCATION_KEY, JSON.stringify(userLocation));
+      localStorage.setItem(LOCATION_STATUS_KEY, "allowed");
+      updateLocationStatusUI(true);
+      closeLocationModal();
+    },
+    () => {
+      localStorage.setItem(LOCATION_STATUS_KEY, "denied");
+      handleLocationError("We couldn't access your location. You can enable it anytime in browser settings.");
+      updateLocationStatusUI(false);
+    },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function initLocationPrompt() {
+  if (!locationModal) return;
+
+  if (enableLocationBtn) {
+    enableLocationBtn.addEventListener("click", openLocationModal);
+  }
+  if (allowLocationBtn) {
+    allowLocationBtn.addEventListener("click", requestLocationAccess);
+  }
+  if (skipLocationBtn) {
+    skipLocationBtn.addEventListener("click", () => {
+      localStorage.setItem(LOCATION_STATUS_KEY, "skipped");
+      updateLocationStatusUI(false);
+      closeLocationModal();
+    });
+  }
+  if (locationModalClose) {
+    locationModalClose.addEventListener("click", closeLocationModal);
+  }
+  locationModal.addEventListener("click", (e) => {
+    if (e.target === locationModal) closeLocationModal();
+  });
+
+  const savedLocation = localStorage.getItem(LOCATION_KEY);
+  if (savedLocation) {
+    userLocation = JSON.parse(savedLocation);
+  }
+  updateLocationStatusUI(!!userLocation);
+
+  const status = localStorage.getItem(LOCATION_STATUS_KEY);
+  if (status !== "allowed" && status !== "skipped") {
+    openLocationModal();
+  }
+}
+
+// Auto-scroll to results section
 function scrollToResults() {
   const resultsSection = document.getElementById("results");
   setTimeout(() => {
@@ -278,6 +393,7 @@ function init() {
   loadMonths();
   loadTheme();
   setupEventListeners();
+  initLocationPrompt();
   displayFavorites();
   updateDateAndTime();
   setInterval(updateDateAndTime, 1000); // Update time every second
@@ -326,10 +442,14 @@ function setupEventListeners() {
   themeSelect.addEventListener("change", changeTheme);
   
   // Modal close
-  modalClose.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
+  if (modalClose) {
+    modalClose.addEventListener("click", closeModal);
+  }
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
   
   // Enable Apply button only when month is selected
   monthSelect.addEventListener("change", () => {
@@ -439,6 +559,7 @@ function updateResults() {
   const budget = budgetFilter.value;
   const vibe = vibeFilter.value;
   const travelerCount = Math.max(1, Number(travelerCountInput.value) || 1);
+  let notice = "";
   
   // Validate: month is required
   if (!month) {
@@ -453,7 +574,8 @@ function updateResults() {
     return;
   }
   
-  let destinations = [...(destinationData[region]?.[month] || [])];
+  const baseDestinations = [...(destinationData[region]?.[month] || [])];
+  let destinations = [...baseDestinations];
   
   // Log filter activity for accuracy monitoring
   console.log(`Applied filters - Month: ${month}, Region: ${region}, Budget: ${budget || 'All'}, Vibe: ${vibe || 'All'}`);
@@ -474,8 +596,30 @@ function updateResults() {
     destinations = destinations.filter(d => d.vibes.includes(vibe));
     console.log(`Vibe filter (${vibe}): ${beforeFilter} → ${destinations.length} destinations`);
   }
+
+  // Fallback: widen filters when no results
+  if (!destinations.length && (budget || vibe)) {
+    if (budget && vibe) {
+      const vibeOnly = baseDestinations.filter(d => d.vibes.includes(vibe));
+      const budgetOnly = baseDestinations.filter(d => categorizeBudget(d.expense) === budget);
+
+      if (vibeOnly.length) {
+        destinations = vibeOnly;
+        notice = "We widened your filters to show matching vibe options.";
+      } else if (budgetOnly.length) {
+        destinations = budgetOnly;
+        notice = "We widened your filters to show matching budget options.";
+      } else if (baseDestinations.length) {
+        destinations = baseDestinations;
+        notice = "We widened your filters to show all options for this month.";
+      }
+    } else if (baseDestinations.length) {
+      destinations = baseDestinations;
+      notice = "We widened your filters to show all options for this month.";
+    }
+  }
   
-  displayDestinations(destinations, month, region, travelerCount);
+  displayDestinations(destinations, month, region, travelerCount, notice);
   updateStats(destinations);
 }
 
@@ -492,7 +636,7 @@ function displayPlaceholder() {
   `;
 }
 
-function displayDestinations(destinations, month, region, travelerCount) {
+function displayDestinations(destinations, month, region, travelerCount, notice = "") {
   if (!destinations.length) {
     // Show fallback message with trusted alternatives
     results.innerHTML = `
@@ -534,8 +678,10 @@ function displayDestinations(destinations, month, region, travelerCount) {
   
   const regionLabel = region === "india" ? "🇮🇳 India" : "🌐 International";
   const heading = `<h2 style="text-align: center; margin-bottom: 2rem;">✨ Best places to visit in ${month} (${regionLabel})</h2>`;
+  const noticeHtml = notice ? `<div class="results-notice">${notice}</div>` : "";
+  const enrichedDestinations = destinations.map(dest => ({ ...dest, region }));
   
-  const cards = destinations
+  const cards = enrichedDestinations
     .map((dest, index) => `
       <div class="destination-card-wrapper" style="animation: slideUp 0.5s ease-out ${index * 0.08}s both;">
         ${createDestinationCard(dest, travelerCount)}
@@ -543,7 +689,7 @@ function displayDestinations(destinations, month, region, travelerCount) {
     `)
     .join("");
   
-  results.innerHTML = `${heading}<div class="destinations-grid">${cards}</div>`;
+  results.innerHTML = `${heading}${noticeHtml}<div class="destinations-grid">${cards}</div>`;
   scrollToResults();
   
   // Event listeners
@@ -686,6 +832,10 @@ function showModal(dest) {
   const totalMin = formatInr(min * travelerCount);
   const totalMax = formatInr(max * travelerCount);
   const source = getSource(dest.place);
+  const travelEstimate = estimateTravelCost(dest);
+  const locationEstimate = travelEstimate
+    ? `${travelEstimate} per person`
+    : "Enable location to estimate travel cost from your city.";
   
   const vibesList = dest.vibes.map(v => {
     const vibeEmojis = { beach: "🏖️", mountain: "⛰️", cultural: "🏛️", adventure: "🚀", relaxation: "🧘", spiritual: "🙏" };
@@ -720,6 +870,10 @@ function showModal(dest) {
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">🚗 Transport Options:</td>
         <td style="padding: 0.75rem; font-weight: 600;">${dest.travel}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid var(--border-color);">
+        <td style="padding: 0.75rem; color: var(--text-secondary);">📍 Travel estimate:</td>
+        <td style="padding: 0.75rem; font-weight: 600;">${locationEstimate}</td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">💰 Cost per person:</td>

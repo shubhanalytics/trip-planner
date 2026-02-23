@@ -32,6 +32,18 @@
                 </div>
             </div>
         </div>
+        <div class="header-trust">
+            <div class="trust-message">
+                <span class="trust-title">No login required.</span>
+                <span class="trust-subtitle">We respect your data and privacy.</span>
+            </div>
+            <div class="trust-actions">
+                <span class="trust-status" id="locationStatusText">📍 Location: Not enabled</span>
+                <span class="trust-badge">No Signup</span>
+                <span class="trust-badge">Privacy First</span>
+                <button class="trust-cta" id="enableLocationBtn">Enable Location</button>
+            </div>
+        </div>
     </header>
 
     <main class="container">
@@ -188,6 +200,22 @@
         <div class="modal-content">
             <button class="modal-close">&times;</button>
             <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Location Permission Modal -->
+    <div id="locationModal" class="modal location-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="locationModalClose">&times;</button>
+            <div class="location-modal-body">
+                <h2>📍 Enable Location for Better Suggestions</h2>
+                <p id="locationMessage">We only use your location to improve travel suggestions and estimate travel cost. No login required and your data stays private.</p>
+                <div class="location-modal-actions">
+                    <button class="btn-apply" id="allowLocation">Allow Location</button>
+                    <button class="btn-reset" id="skipLocation">Not Now</button>
+                </div>
+                <p class="location-disclaimer">You can disable location any time in your browser settings.</p>
+            </div>
         </div>
     </div>
 
