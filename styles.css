@@ -251,7 +251,6 @@ body {
   align-items: center;
   justify-content: center;
   transition: var(--transition);
-  hover-highlight: true;
 }
 
 .theme-toggle:hover {
@@ -334,6 +333,12 @@ body {
   align-items: flex-end;
 }
 
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -387,6 +392,45 @@ select:focus, input[type="number"]:focus {
   color: white;
   border-color: var(--accent-primary);
   transform: translateY(-2px);
+}
+
+.btn-apply {
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-gradient);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-apply:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-apply:active {
+  transform: translateY(0);
+}
+
+/* Data Notice */
+.data-notice {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border: 2px solid var(--accent-light);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: -1.5rem 0 2rem 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.data-notice p {
+  margin: 0;
+  color: var(--text-secondary);
 }
 
 /* Stats Section */
@@ -705,6 +749,7 @@ body.dark-mode .btn-favorite:hover {
 
 .tip-card {
   background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 1.5rem;
