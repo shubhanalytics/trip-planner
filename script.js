@@ -605,22 +605,39 @@ function initTestimonialsAutoScroll() {
   const testimonialsGrid = document.querySelector('.testimonials-grid');
   if (!testimonialsGrid) return;
   
-  // Only enable auto-scroll on mobile devices
-  if (window.innerWidth <= 480) {
-    let scrollPosition = 0;
-    const scrollSpeed = 1; // pixels per interval
-    const scrollInterval = 50; // milliseconds
+  let autoScrollInterval;
+  
+  function startAutoScroll() {
+    if (autoScrollInterval) clearInterval(autoScrollInterval);
     
-    setInterval(() => {
-      scrollPosition += scrollSpeed;
-      testimonialsGrid.scrollLeft = scrollPosition;
+    if (window.innerWidth <= 480) {
+      let scrollSpeed = 1;
       
-      // Reset to beginning when reaching the end
-      if (scrollPosition >= testimonialsGrid.scrollWidth - testimonialsGrid.clientWidth) {
-        scrollPosition = 0;
-      }
-    }, scrollInterval);
+      autoScrollInterval = setInterval(() => {
+        testimonialsGrid.scrollLeft += scrollSpeed;
+        
+        // Reset to beginning when reaching the end
+        if (testimonialsGrid.scrollLeft >= testimonialsGrid.scrollWidth - testimonialsGrid.clientWidth) {
+          testimonialsGrid.scrollLeft = 0;
+        }
+      }, 30);
+    }
   }
+  
+  // Start auto-scroll
+  startAutoScroll();
+  
+  // Restart on window resize
+  window.addEventListener('resize', startAutoScroll);
+  
+  // Pause on touch/mouse interaction
+  testimonialsGrid.addEventListener('touchstart', () => {
+    if (autoScrollInterval) clearInterval(autoScrollInterval);
+  });
+  
+  testimonialsGrid.addEventListener('touchend', () => {
+    setTimeout(startAutoScroll, 2000);
+  });
 }
 
 // ============================================
