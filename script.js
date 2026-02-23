@@ -171,6 +171,8 @@ const favoritesList = document.getElementById("favoritesList");
 const dateDisplay = document.getElementById("dateDisplay");
 const timeDisplay = document.getElementById("timeDisplay");
 const sectionTabs = document.querySelectorAll(".section-tab");
+const presetChips = document.querySelectorAll(".preset-chip");
+const backToTopBtn = document.getElementById("backToTop");
 
 // ============================================
 // SOURCE CITATIONS MAPPING
@@ -623,11 +625,18 @@ function init() {
   setupEventListeners();
   initSectionTabs();
   syncStickyOffset();
+  initUXEnhancements();
   initLocationPrompt();
   displayFavorites();
   updateDateAndTime();
   setInterval(updateDateAndTime, 1000); // Update time every second
   initTestimonialsAutoScroll();
+}
+
+function initUXEnhancements() {
+  initQuickPresets();
+  initBackToTop();
+  initSmartAnchors();
 }
 
 function syncStickyOffset() {
@@ -703,6 +712,65 @@ function initSectionTabs() {
   setupObserver();
   window.addEventListener("resize", setupObserver);
   window.addEventListener("orientationchange", setupObserver);
+}
+
+function initQuickPresets() {
+  if (!presetChips.length) return;
+
+  presetChips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      presetChips.forEach((item) => item.classList.remove("active"));
+      chip.classList.add("active");
+
+      const { region, vibe, budget } = chip.dataset;
+      if (region && regionSelect) regionSelect.value = region;
+      if (vibe && vibeFilter) vibeFilter.value = vibe;
+      if (budget && budgetFilter) budgetFilter.value = budget;
+
+      if (!monthSelect.value) {
+        const monthNames = Object.keys(destinationData.india);
+        const nowMonth = new Date().toLocaleString("en-US", { month: "long" });
+        monthSelect.value = monthNames.includes(nowMonth) ? nowMonth : monthNames[0];
+      }
+
+      updateResults();
+    });
+  });
+}
+
+function clearPresetSelection() {
+  if (!presetChips.length) return;
+  presetChips.forEach((chip) => chip.classList.remove("active"));
+}
+
+function initBackToTop() {
+  if (!backToTopBtn) return;
+
+  const toggleVisibility = () => {
+    const visible = window.scrollY > 500;
+    backToTopBtn.classList.toggle("visible", visible);
+  };
+
+  toggleVisibility();
+  window.addEventListener("scroll", toggleVisibility, { passive: true });
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+function initSmartAnchors() {
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", (event) => {
+      const targetId = anchor.getAttribute("href");
+      if (!targetId || targetId === "#") return;
+
+      const target = document.querySelector(targetId);
+      if (!target) return;
+
+      event.preventDefault();
+      scrollToSection(target);
+    });
+  });
 }
 
 // ============================================
@@ -823,7 +891,13 @@ function setupEventListeners() {
     applyBtn.disabled = !monthSelect.value;
     applyBtn.style.opacity = monthSelect.value ? "1" : "0.5";
     applyBtn.style.cursor = monthSelect.value ? "pointer" : "not-allowed";
+    clearPresetSelection();
   });
+
+  regionSelect.addEventListener("change", clearPresetSelection);
+  budgetFilter.addEventListener("change", clearPresetSelection);
+  vibeFilter.addEventListener("change", clearPresetSelection);
+  travelerCountInput.addEventListener("change", clearPresetSelection);
 }
 
 function changeTheme() {
@@ -917,6 +991,7 @@ function resetAllFilters() {
   budgetFilter.value = "";
   vibeFilter.value = "";
   travelerCountInput.value = "1";
+  clearPresetSelection();
   updateResults();
 }
 

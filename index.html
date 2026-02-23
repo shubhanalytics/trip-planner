@@ -8,6 +8,10 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
 </head>
 <body>
+    <div class="bg-orb orb-1" aria-hidden="true"></div>
+    <div class="bg-orb orb-2" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -62,14 +66,19 @@
 
     <main class="container">
         <!-- Hero Section -->
-        <section class="hero">
+        <section class="hero" id="top">
             <div class="hero-content">
-                <h2 class="hero-title">Travel Smarter, Plan Confidently</h2>
-                <p class="hero-subtitle">Your decision layer for travel: discover where to go, when it works best, and what fits your style—before you spend.</p>
+                <p class="hero-eyebrow">WANDERHUB INTELLIGENCE</p>
+                <h2 class="hero-title">Design Better Trips in Minutes</h2>
+                <p class="hero-subtitle">A modern travel intelligence workspace to discover best-fit destinations by month, vibe, and budget—without booking noise.</p>
                 <div class="hero-tags" aria-label="WanderHub value tags">
                     <span class="hero-tag">📊 Data-backed suggestions</span>
                     <span class="hero-tag">🧭 No booking pressure</span>
                     <span class="hero-tag">🧠 Clear decision support</span>
+                </div>
+                <div class="hero-actions">
+                    <a href="#filtersSectionBlock" class="hero-btn hero-btn-primary">Start Exploring</a>
+                    <a href="#results" class="hero-btn hero-btn-secondary">See Destination Intelligence</a>
                 </div>
             </div>
         </section>
@@ -104,6 +113,16 @@
 
         <!-- Filters Section -->
         <section class="filters-section" id="filtersSectionBlock">
+            <div class="section-head">
+                <h2>Trip Explorer</h2>
+                <p>Set your month, style, and preferences. Use quick presets to move faster.</p>
+            </div>
+            <div class="quick-presets" aria-label="Quick presets">
+                <button class="preset-chip" data-region="india" data-vibe="mountain" data-budget="budget">🏔️ India • Budget Mountains</button>
+                <button class="preset-chip" data-region="india" data-vibe="beach" data-budget="moderate">🏖️ India • Beach Escape</button>
+                <button class="preset-chip" data-region="international" data-vibe="cultural" data-budget="moderate">🏛️ International • Cultural Cities</button>
+                <button class="preset-chip" data-region="international" data-vibe="adventure" data-budget="luxury">🚀 International • Luxury Adventure</button>
+            </div>
             <div class="filters-container">
                 <div class="filter-group">
                     <label for="monthSelect" class="filter-label">📅 Best Month to Travel</label>
@@ -181,6 +200,10 @@
 
         <!-- Results Section -->
         <section id="results" class="results">
+            <div class="section-head">
+                <h2>Destination Intelligence</h2>
+                <p>Shortlist based on timing, practical fit, and traveler intent.</p>
+            </div>
             <div class="placeholder-state">
                 <div class="placeholder-icon">🗺️</div>
                 <h3>Ready to discover your best-fit trip?</h3>
@@ -190,7 +213,10 @@
 
         <!-- Favorites Section -->
         <section id="favoritesSection" class="favorites-section hidden">
-            <h2>❤️ Your Favorites</h2>
+            <div class="section-head">
+                <h2>❤️ Your Favorites</h2>
+                <p>Your decision-ready shortlist for the next trip.</p>
+            </div>
             <div id="favoritesList" class="destinations-grid"></div>
         </section>
 
@@ -245,6 +271,8 @@
             <p>Made with ❤️ for curious explorers • WanderHub © 2026 • Travel intelligence for better decisions, not bookings.</p>
         </footer>
     </main>
+
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">↑</button>
 
     <!-- Modal for Destination Details -->
     <div id="detailsModal" class="modal">
