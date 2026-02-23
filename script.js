@@ -1234,3 +1234,15 @@ window.addEventListener("beforeunload", () => {
   localStorage.removeItem(LOCATION_KEY);
   localStorage.removeItem(LOCATION_STATUS_KEY);
 });
+
+// Also reset location on page load to show modal every time
+window.addEventListener("load", () => {
+  // Clear location data so modal shows again
+  localStorage.removeItem(LOCATION_KEY);
+  // Reset status to trigger modal
+  localStorage.removeItem(LOCATION_STATUS_KEY);
+  // Re-trigger location prompt after a short delay
+  setTimeout(() => {
+    initLocationPrompt();
+  }, 300);
+});

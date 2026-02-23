@@ -258,6 +258,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+  flex: 0 0 auto;
 }
 
 .trust-status {
@@ -267,6 +268,9 @@ body {
   border-radius: 999px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
 }
 
 .trust-badge {
@@ -290,6 +294,9 @@ body {
   background: var(--bg-gradient);
   cursor: pointer;
   transition: var(--transition);
+  flex: 0 0 auto;
+  white-space: nowrap;
+  min-width: fit-content;
 }
 
 .trust-cta:hover {
@@ -306,6 +313,9 @@ body {
   background: transparent;
   cursor: pointer;
   transition: var(--transition);
+  flex: 0 0 auto;
+  white-space: nowrap;
+  min-width: fit-content;
 }
 
 .trust-ghost:hover {
