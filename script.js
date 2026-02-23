@@ -1147,7 +1147,7 @@ function closeModal() {
 // MUSIC PLAYER
 // ============================================
 const musicToggle = document.getElementById("musicToggle");
-const backgroundMusic = new Audio("yun-hi-chala-chal-raahi.mp3");
+const backgroundMusic = new Audio("Yun Hi Chala Chal-raahi.mp3");
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.3;
 let isPlaying = false;
