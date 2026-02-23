@@ -469,11 +469,19 @@ function setRegionRestriction(isRestricted, message) {
 }
 
 function openLocationModal() {
-  if (locationModal) locationModal.classList.add("active");
+  if (locationModal) {
+    locationModal.classList.add("active");
+    // Prevent body scroll on mobile when modal is open
+    document.body.style.overflow = "hidden";
+  }
 }
 
 function closeLocationModal() {
-  if (locationModal) locationModal.classList.remove("active");
+  if (locationModal) {
+    locationModal.classList.remove("active");
+    // Restore body scroll
+    document.body.style.overflow = "";
+  }
 }
 
 function handleLocationError(message) {
@@ -571,8 +579,12 @@ function initLocationPrompt() {
   }
 
   const status = localStorage.getItem(LOCATION_STATUS_KEY);
-  if (status !== "allowed" && status !== "skipped") {
-    openLocationModal();
+  // Show modal on first visit or if location was never set
+  if (!status || (status !== "allowed" && status !== "skipped")) {
+    // Delay modal slightly to ensure everything is loaded
+    setTimeout(() => {
+      openLocationModal();
+    }, 500);
   }
 }
 
@@ -1180,10 +1192,14 @@ function showModal(dest) {
   `;
   
   modal.classList.add("active");
+  // Prevent body scroll on mobile when modal is open
+  document.body.style.overflow = "hidden";
 }
 
 function closeModal() {
   modal.classList.remove("active");
+  // Restore body scroll
+  document.body.style.overflow = "";
 }
 
 // ============================================
