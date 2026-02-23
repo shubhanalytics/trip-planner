@@ -581,7 +581,7 @@ select:focus, input[type="number"]:focus {
   padding: 0.75rem 1.5rem;
   background: var(--bg-gradient);
   color: white;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
@@ -1447,39 +1447,67 @@ body.dark-mode .btn-favorite:hover {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: none;
-    gap: 1rem;
+    gap: 1.25rem;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent-primary) var(--bg-secondary);
-    padding-bottom: 1rem;
+    scrollbar-width: none;
+    padding-bottom: 1.5rem;
     scroll-behavior: smooth;
   }
 
   .testimonials-grid::-webkit-scrollbar {
-    height: 8px;
+    display: none;
   }
 
-  .testimonials-grid::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-    border-radius: 10px;
+  .testimonials h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
   }
 
-  .testimonials-grid::-webkit-scrollbar-thumb {
-    background: var(--accent-primary);
-    border-radius: 10px;
+  .testimonials {
+    padding: 2rem 1.5rem;
+    position: relative;
+  }
+
+  .testimonials::after {
+    content: '→ Swipe';
+    position: absolute;
+    top: 2rem;
+    right: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+    animation: pulse 2s infinite;
   }
 
   .testimonial-card {
-    min-width: 280px;
+    min-width: 85%;
     scroll-snap-align: center;
     flex-shrink: 0;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     border: 2px solid var(--accent-primary);
     background: var(--card-bg);
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+    height: auto;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .testimonial-card:hover {
     transform: translateY(-5px);
+  }
+
+  .testimonial-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .testimonial-author {
+    font-size: 0.9rem;
+    opacity: 0.9;
   }
 
   .tips-grid {
