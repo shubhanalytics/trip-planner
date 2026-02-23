@@ -164,6 +164,7 @@ const locationModalClose = document.getElementById("locationModalClose");
 const allowLocationBtn = document.getElementById("allowLocation");
 const skipLocationBtn = document.getElementById("skipLocation");
 const enableLocationBtn = document.getElementById("enableLocationBtn");
+const clearLocationBtn = document.getElementById("clearLocationBtn");
 const locationStatusText = document.getElementById("locationStatusText");
 const locationMessage = document.getElementById("locationMessage");
 const favoritesSection = document.getElementById("favoritesSection");
@@ -250,6 +251,82 @@ const sourceMappings = {
   "Fiji Islands": "Fiji Tourism"
 };
 
+// Destination coordinates (approximate city centers)
+const destinationCoordinates = {
+  "Jaipur, Rajasthan": { lat: 26.9124, lon: 75.7873 },
+  "Kochi, Kerala": { lat: 9.9312, lon: 76.2673 },
+  "Jaisalmer, Rajasthan": { lat: 26.9157, lon: 70.9083 },
+  "Goa": { lat: 15.2993, lon: 74.1240 },
+  "Munnar, Kerala": { lat: 10.0889, lon: 77.0595 },
+  "Udaipur, Rajasthan": { lat: 24.5854, lon: 73.7125 },
+  "Pushkar, Rajasthan": { lat: 26.4894, lon: 74.5511 },
+  "Rishikesh, Uttarakhand": { lat: 30.0869, lon: 78.2676 },
+  "Hampi, Karnataka": { lat: 15.3350, lon: 76.4600 },
+  "Darjeeling, West Bengal": { lat: 27.0360, lon: 88.2627 },
+  "Pondicherry, Tamil Nadu": { lat: 11.9416, lon: 79.8083 },
+  "Mysore, Karnataka": { lat: 12.2958, lon: 76.6394 },
+  "Coorg, Karnataka": { lat: 12.3375, lon: 75.8069 },
+  "Ooty, Tamil Nadu": { lat: 11.4102, lon: 76.6950 },
+  "Shimla, Himachal Pradesh": { lat: 31.1048, lon: 77.1734 },
+  "Kasol, Himachal Pradesh": { lat: 32.0100, lon: 77.3145 },
+  "McLeodganj, Himachal Pradesh": { lat: 32.2426, lon: 76.3210 },
+  "Shillong, Meghalaya": { lat: 25.5788, lon: 91.8933 },
+  "Manali, Himachal Pradesh": { lat: 32.2432, lon: 77.1892 },
+  "Spiti Valley, Himachal Pradesh": { lat: 32.2460, lon: 78.0400 },
+  "Palampur, Himachal Pradesh": { lat: 32.1109, lon: 76.5363 },
+  "Ladakh, Jammu & Kashmir": { lat: 34.1526, lon: 77.5771 },
+  "Valley of Flowers, Uttarakhand": { lat: 30.7326, lon: 79.6059 },
+  "Tawang, Arunachal Pradesh": { lat: 27.5866, lon: 91.8679 },
+  "Kodaikanal, Tamil Nadu": { lat: 10.2381, lon: 77.4892 },
+  "Mahabaleshwar, Maharashtra": { lat: 17.9307, lon: 73.6477 },
+  "Lonavala, Maharashtra": { lat: 18.7557, lon: 73.4091 },
+  "Alleppey, Kerala": { lat: 9.4981, lon: 76.3388 },
+  "Khajuraho, Madhya Pradesh": { lat: 24.8318, lon: 79.9199 },
+  "Polonnaruwa, Sri Lanka": { lat: 7.9403, lon: 81.0188 },
+  "Ziro Valley, Arunachal Pradesh": { lat: 27.5947, lon: 93.8276 },
+  "Andaman Islands": { lat: 11.7401, lon: 92.6586 },
+  "Varanasi, Uttar Pradesh": { lat: 25.3176, lon: 82.9739 },
+  "Jodhpur, Rajasthan": { lat: 26.2389, lon: 73.0243 },
+  "Sikkim": { lat: 27.5330, lon: 88.5122 },
+  "Rann of Kutch, Gujarat": { lat: 23.7337, lon: 69.8597 },
+  "Amritsar, Punjab": { lat: 31.6340, lon: 74.8723 },
+  "Auli, Uttarakhand": { lat: 30.5280, lon: 79.5669 },
+  "Bali, Indonesia": { lat: -8.3405, lon: 115.0920 },
+  "Dubai, UAE": { lat: 25.2048, lon: 55.2708 },
+  "Phuket, Thailand": { lat: 7.8804, lon: 98.3923 },
+  "Maldives": { lat: 3.2028, lon: 73.2207 },
+  "Tokyo, Japan": { lat: 35.6762, lon: 139.6503 },
+  "Barcelona, Spain": { lat: 41.3851, lon: 2.1734 },
+  "Singapore": { lat: 1.3521, lon: 103.8198 },
+  "Bangkok, Thailand": { lat: 13.7563, lon: 100.5018 },
+  "Kyoto, Japan": { lat: 35.0116, lon: 135.7681 },
+  "Hanoi & Ha Long Bay, Vietnam": { lat: 20.9514, lon: 107.0843 },
+  "Paris, France": { lat: 48.8566, lon: 2.3522 },
+  "Istanbul, Turkey": { lat: 41.0082, lon: 28.9784 },
+  "Athens, Greece": { lat: 37.9838, lon: 23.7275 },
+  "Amsterdam, Netherlands": { lat: 52.3676, lon: 4.9041 },
+  "Santorini, Greece": { lat: 36.3932, lon: 25.4615 },
+  "Vienna, Austria": { lat: 48.2082, lon: 16.3738 },
+  "Swiss Alps, Switzerland": { lat: 46.8182, lon: 8.2275 },
+  "Reykjavik, Iceland": { lat: 64.1466, lon: -21.9426 },
+  "Edinburgh, Scotland": { lat: 55.9533, lon: -3.1883 },
+  "London, UK": { lat: 51.5074, lon: -0.1278 },
+  "Copenhagen, Denmark": { lat: 55.6761, lon: 12.5683 },
+  "Venice, Italy": { lat: 45.4408, lon: 12.3155 },
+  "Rome, Italy": { lat: 41.9028, lon: 12.4964 },
+  "Sydney, Australia": { lat: -33.8688, lon: 151.2093 },
+  "Berlin, Germany": { lat: 52.5200, lon: 13.4050 },
+  "New York, USA": { lat: 40.7128, lon: -74.0060 },
+  "Morocco - Marrakech": { lat: 31.6295, lon: -7.9811 },
+  "Mexico City, Mexico": { lat: 19.4326, lon: -99.1332 },
+  "Portugal - Lisbon": { lat: 38.7223, lon: -9.1393 },
+  "Abu Dhabi, UAE": { lat: 24.4539, lon: 54.3773 },
+  "Doha, Qatar": { lat: 25.2854, lon: 51.5310 },
+  "Cape Town, South Africa": { lat: -33.9249, lon: 18.4241 },
+  "Lapland, Finland": { lat: 66.5039, lon: 25.7294 },
+  "Fiji Islands": { lat: -17.7134, lon: 178.0650 }
+};
+
 // ============================================
 // LOCAL STORAGE & PERSISTENCE
 // ============================================
@@ -265,6 +342,27 @@ function getSource(place) {
   return sourceMappings[place] || "Travel Database";
 }
 
+function getDestinationCoordinates(place) {
+  return destinationCoordinates[place] || null;
+}
+
+function toRad(value) {
+  return (value * Math.PI) / 180;
+}
+
+function haversineKm(from, to) {
+  const earthRadius = 6371;
+  const dLat = toRad(to.lat - from.latitude);
+  const dLon = toRad(to.lon - from.longitude);
+  const lat1 = toRad(from.latitude);
+  const lat2 = toRad(to.lat);
+
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadius * c;
+}
+
 function isInIndia(latitude, longitude) {
   return latitude >= 6 && latitude <= 37.5 && longitude >= 68 && longitude <= 97.5;
 }
@@ -272,26 +370,62 @@ function isInIndia(latitude, longitude) {
 function estimateTravelCost(dest) {
   if (!userLocation) return null;
 
+  const coords = getDestinationCoordinates(dest.place);
+  if (!coords) return null;
+
+  const distanceKm = Math.round(haversineKm(userLocation, coords));
   const userInIndia = isInIndia(userLocation.latitude, userLocation.longitude);
   const destRegion = dest.region || "india";
   const travelModes = (dest.travel || "").toLowerCase();
-  let range = { min: 1000, max: 10000 };
 
-  if (destRegion === "international") {
-    range = userInIndia ? { min: 20000, max: 120000 } : { min: 15000, max: 100000 };
-  } else if (!userInIndia) {
-    range = { min: 20000, max: 120000 };
+  let min = 0;
+  let max = 0;
+
+  if (destRegion === "international" || !userInIndia) {
+    min = distanceKm * 6 + 15000;
+    max = distanceKm * 12 + 45000;
   } else if (travelModes.includes("flight")) {
-    range = { min: 3000, max: 15000 };
+    min = distanceKm * 2.5 + 1500;
+    max = distanceKm * 5 + 3500;
   } else if (travelModes.includes("train")) {
-    range = { min: 500, max: 6000 };
+    min = distanceKm * 0.8 + 300;
+    max = distanceKm * 1.5 + 800;
   } else if (travelModes.includes("bus")) {
-    range = { min: 300, max: 3500 };
-  } else if (travelModes.includes("bike") || travelModes.includes("cab") || travelModes.includes("car")) {
-    range = { min: 1500, max: 8000 };
+    min = distanceKm * 0.6 + 200;
+    max = distanceKm * 1.2 + 600;
+  } else {
+    min = distanceKm * 1.2 + 600;
+    max = distanceKm * 2.5 + 1500;
   }
 
-  return `${formatInr(range.min)} - ${formatInr(range.max)} (estimate)`;
+  return `${formatInr(min)} - ${formatInr(max)} (approx ${distanceKm} km)`;
+}
+
+function getNearbyRecommendations(destinations, count = 3) {
+  if (!destinations.length) return [];
+
+  if (!userLocation) {
+    return [...destinations]
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, count);
+  }
+
+  const withDistance = destinations
+    .map((dest) => {
+      const coords = getDestinationCoordinates(dest.place);
+      if (!coords) return null;
+      const distanceKm = haversineKm(userLocation, coords);
+      return { ...dest, distanceKm };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.distanceKm - b.distanceKm)
+    .slice(0, count);
+
+  if (withDistance.length) return withDistance;
+
+  return [...destinations]
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, count);
 }
 
 function updateLocationStatusUI(isEnabled) {
@@ -299,6 +433,11 @@ function updateLocationStatusUI(isEnabled) {
   locationStatusText.textContent = isEnabled ? "📍 Location: Enabled" : "📍 Location: Not enabled";
   if (enableLocationBtn) {
     enableLocationBtn.textContent = isEnabled ? "Update Location" : "Enable Location";
+  }
+  if (clearLocationBtn) {
+    clearLocationBtn.disabled = !isEnabled;
+    clearLocationBtn.style.opacity = isEnabled ? "1" : "0.5";
+    clearLocationBtn.style.cursor = isEnabled ? "pointer" : "not-allowed";
   }
 }
 
@@ -357,6 +496,15 @@ function initLocationPrompt() {
       localStorage.setItem(LOCATION_STATUS_KEY, "skipped");
       updateLocationStatusUI(false);
       closeLocationModal();
+    });
+  }
+  if (clearLocationBtn) {
+    clearLocationBtn.addEventListener("click", () => {
+      userLocation = null;
+      localStorage.removeItem(LOCATION_KEY);
+      localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
+      updateLocationStatusUI(false);
+      handleLocationError("Location cleared. Enable it again for better estimates.");
     });
   }
   if (locationModalClose) {
@@ -619,7 +767,8 @@ function updateResults() {
     }
   }
   
-  displayDestinations(destinations, month, region, travelerCount, notice);
+  const suggestions = getNearbyRecommendations(baseDestinations.map(dest => ({ ...dest, region })), 3);
+  displayDestinations(destinations, month, region, travelerCount, notice, suggestions);
   updateStats(destinations);
 }
 
@@ -636,8 +785,25 @@ function displayPlaceholder() {
   `;
 }
 
-function displayDestinations(destinations, month, region, travelerCount, notice = "") {
+function displayDestinations(destinations, month, region, travelerCount, notice = "", suggestions = []) {
   if (!destinations.length) {
+    const suggestionCards = suggestions
+      .map((dest, index) => `
+        <div class="destination-card-wrapper" style="animation: slideUp 0.5s ease-out ${index * 0.08}s both;">
+          ${createDestinationCard(dest, travelerCount)}
+        </div>
+      `)
+      .join("");
+
+    const suggestionsHtml = suggestionCards
+      ? `
+        <div class="suggestions-block">
+          <h4 class="suggestions-title">Nearby Picks Just for You</h4>
+          <div class="destinations-grid">${suggestionCards}</div>
+        </div>
+      `
+      : "";
+
     // Show fallback message with trusted alternatives
     results.innerHTML = `
       <div class="placeholder-state error-state">
@@ -671,6 +837,7 @@ function displayDestinations(destinations, month, region, travelerCount, notice 
         
         <p style="color: var(--accent-color); margin-top: 1.5rem; font-size: 0.85rem;">💡 Tip: Try adjusting your filters or check back soon for more destinations!</p>
       </div>
+      ${suggestionsHtml}
     `;
     scrollToResults();
     return;
