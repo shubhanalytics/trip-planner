@@ -3512,7 +3512,9 @@ body:not(.dark-mode) .hero-btn-secondary {
 .quick-presets {
   display: flex;
   gap: 0.6rem;
-  overflow-x: auto;
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-x: visible;
   padding: 0.08rem 0.08rem 0.36rem;
   margin-bottom: 1rem;
   scrollbar-width: none;
@@ -3554,6 +3556,7 @@ body:not(.dark-mode) .hero-btn-secondary {
   border: 1px solid rgba(141, 163, 255, 0.33);
   border-radius: 14px;
   padding: 0.75rem;
+  justify-items: center;
 }
 
 .filter-label {
@@ -3563,6 +3566,8 @@ body:not(.dark-mode) .hero-btn-secondary {
   align-items: center;
   text-align: center;
   white-space: nowrap;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .filters-section select,
@@ -3573,6 +3578,12 @@ body:not(.dark-mode) .hero-btn-secondary {
   color: var(--ux-text) !important;
   text-align: center;
   text-align-last: center;
+  width: 100%;
+}
+
+.filters-section select {
+  padding-left: 1rem;
+  padding-right: 2rem;
 }
 
 .filters-section select option {
@@ -4022,6 +4033,7 @@ body:not(.dark-mode) .carousel-dot:hover {
 
   .quick-presets {
     margin-bottom: 0.75rem;
+    justify-content: center;
   }
 }
 
