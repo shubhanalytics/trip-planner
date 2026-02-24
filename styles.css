@@ -2722,8 +2722,13 @@ body {
   margin: 0 0 var(--ux-section-gap) 0 !important;
 }
 
+.container > .page-tabs {
+  margin-top: 0.35rem !important;
+  margin-bottom: calc(var(--ux-section-gap) + 0.2rem) !important;
+}
+
 .container > .quick-start {
-  margin: 0 auto var(--ux-section-gap) auto !important;
+  margin: 0 auto calc(var(--ux-section-gap) + 0.2rem) auto !important;
   padding: 0 !important;
   max-width: none !important;
 }
@@ -2738,6 +2743,57 @@ body {
 
 .page-tab {
   min-height: 44px;
+}
+
+.filter-actions {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(180px, 220px)) !important;
+  justify-content: center !important;
+  justify-items: center !important;
+  align-items: center !important;
+  margin-inline: auto;
+}
+
+.filter-actions .btn-apply,
+.filter-actions .btn-reset {
+  width: 100% !important;
+  min-width: 180px !important;
+  max-width: 220px;
+  height: 48px;
+  text-align: center;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+@media (min-width: 1180px) {
+  .filters-container {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+  }
+
+  .filter-group {
+    min-width: 0;
+    grid-template-rows: minmax(2.4rem, auto) 48px;
+  }
+
+  .filter-label {
+    min-height: 2.4rem;
+    line-height: 1.25;
+    align-items: flex-end;
+  }
+
+  .filters-section select,
+  .traveler-stepper,
+  .traveler-stepper input[type="number"] {
+    width: 100%;
+  }
+
+  .filter-actions {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(180px, 220px) minmax(180px, 220px);
+    justify-content: center;
+    margin-top: 0.35rem;
+  }
 }
 
 .section-head h2,
@@ -2786,6 +2842,19 @@ body {
     padding: 0.55rem 0.85rem !important;
   }
 
+  .filter-actions {
+    grid-template-columns: 1fr !important;
+    justify-items: stretch !important;
+    width: 100%;
+  }
+
+  .filter-actions .btn-apply,
+  .filter-actions .btn-reset {
+    min-width: 0 !important;
+    max-width: none;
+    width: 100% !important;
+  }
+
   .container > .hero,
   .container > .quick-start,
   .container > .page-tabs,
@@ -2796,6 +2865,11 @@ body {
   .container > .favorites-section,
   .container > .testimonials,
   .container > .tips-section {
+    margin-bottom: var(--ux-section-gap-mobile) !important;
+  }
+
+  .container > .page-tabs {
+    margin-top: 0 !important;
     margin-bottom: var(--ux-section-gap-mobile) !important;
   }
 
