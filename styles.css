@@ -740,6 +740,7 @@ select:focus, input[type="number"]:focus {
   align-items: center;
   gap: 0;
   height: 48px;
+  justify-self: center;
 }
 
 .stepper-btn {
@@ -2568,6 +2569,7 @@ body.dark-mode .btn-favorite:hover {
 
   .traveler-stepper {
     min-height: 48px;
+    justify-self: center;
   }
 
   .stepper-btn {
