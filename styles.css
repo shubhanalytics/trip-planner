@@ -3845,3 +3845,120 @@ input:focus-visible {
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* ============================================
+   LIGHT MODE TEXT VISIBILITY FIXES
+   ============================================ */
+
+body:not(.dark-mode) {
+  /* Page tabs text color */
+  .page-tab {
+    color: var(--ux-text) !important;
+  }
+
+  /* Section headings */
+  .section-head h2,
+  .quick-start h2,
+  .testimonials h2,
+  .tips-section h2,
+  .favorites-section h2 {
+    color: var(--ux-text) !important;
+  }
+
+  /* Hero section text */
+  .hero-eyebrow {
+    color: var(--ux-muted) !important;
+  }
+
+  .hero-subtitle {
+    color: var(--ux-muted) !important;
+  }
+
+  .hero-tag {
+    background: rgba(79, 70, 229, 0.08) !important;
+    border: 1px solid rgba(79, 70, 229, 0.25) !important;
+    color: #2f3f5c !important;
+  }
+
+  /* Data notice */
+  .data-notice {
+    color: var(--ux-text) !important;
+  }
+
+  .data-notice p {
+    color: var(--ux-text) !important;
+  }
+
+  /* Stats section */
+  .stat-label {
+    color: var(--ux-text) !important;
+  }
+
+  /* Placeholder state */
+  .placeholder-state h3,
+  .placeholder-state p,
+  .results-notice {
+    color: var(--ux-text) !important;
+  }
+
+  /* Destination cards */
+  .destination-card h3,
+  .info-label,
+  .info-value,
+  .destination-card p {
+    color: var(--ux-text) !important;
+  }
+
+  /* Vibe tags */
+  .vibe-tag {
+    background: rgba(79, 70, 229, 0.1) !important;
+    border: 1px solid rgba(79, 70, 229, 0.3) !important;
+    color: #2f3f5c !important;
+  }
+
+  /* Buttons text */
+  .btn-favorite,
+  .btn-view-details {
+    color: var(--ux-text) !important;
+  }
+
+  /* Testimonials and tips */
+  .testimonial-text,
+  .testimonial-author,
+  .tip-card h3,
+  .tip-card p,
+  .platform-card h4,
+  .platform-card p,
+  .favorites-section h2,
+  .tips-section h2,
+  .testimonials h2 {
+    color: var(--ux-text) !important;
+  }
+
+  /* Modal content */
+  .modal-content h2,
+  .modal-content h3,
+  .modal-content p,
+  .modal-content td {
+    color: var(--ux-text) !important;
+  }
+
+  /* Footer */
+  .footer {
+    color: var(--ux-text) !important;
+  }
+
+  /* Section paragraphs */
+  .section-head p,
+  .quick-step p,
+  .testimonial-text,
+  .data-notice p,
+  .placeholder-state p {
+    color: var(--ux-muted) !important;
+  }
+
+  /* Reset button text */
+  .btn-reset {
+    color: var(--ux-text) !important;
+  }
+}
