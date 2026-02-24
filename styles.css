@@ -793,9 +793,7 @@ select:focus, input[type="number"]:focus {
   font-size: 1.1rem;
   padding: 0;
   cursor: default;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  vertical-align: middle;
   line-height: 48px;
 }
 
@@ -4007,4 +4005,66 @@ body:not(.dark-mode) select option {
 body:not(.dark-mode) button,
 body:not(.dark-mode) a.btn {
   color: #111c38 !important;
+}
+
+/* Location Modal - Light Mode */
+body:not(.dark-mode) .location-modal-body h2 {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .location-description {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .benefit-item {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .benefit-text {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .location-disclaimer {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .location-modal-actions button {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .location-modal .modal-content {
+  background: #ffffff !important;
+}
+
+body:not(.dark-mode) .location-benefits {
+  background: rgba(79, 70, 229, 0.05) !important;
+}
+
+/* Additional text elements that might be light */
+body:not(.dark-mode) .info-label,
+body:not(.dark-mode) .info-value {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .destination-card p {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .stat-card {
+  background: #ffffff !important;
+}
+
+body:not(.dark-mode) h3,
+body:not(.dark-mode) h4,
+body:not(.dark-mode) h5,
+body:not(.dark-mode) h6 {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) p {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) span {
+  color: inherit;
 }
