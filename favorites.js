@@ -9,12 +9,10 @@ const THEME_KEY = "wanderhub_theme";
 const favoritesEmpty = document.getElementById("favoritesEmpty");
 const favoritesGrid = document.getElementById("favoritesGrid");
 const clearAllBtn = document.getElementById("clearAllFavorites");
-const themeSelect = document.getElementById("themeSelect");
+const themeToggleBtn = document.getElementById("themeToggle");
 const musicPlayer = document.getElementById("musicPlayer");
 const musicPlay = document.getElementById("musicPlay");
 const musicPause = document.getElementById("musicPause");
-const musicTrackName = document.getElementById("musicTrackName");
-const musicStatus = document.getElementById("musicStatus");
 
 // State
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
@@ -26,7 +24,7 @@ let audioPlayer = null;
 function init() {
   loadTheme();
   loadFavorites();
-  initThemeSelector();
+  initThemeToggle();
   initMusicPlayer();
   
   // Clear all button
@@ -39,21 +37,33 @@ function init() {
 // THEME MANAGEMENT
 // ============================================
 function loadTheme() {
-  const savedTheme = localStorage.getItem(THEME_KEY) || "dark";
-  document.body.className = `${savedTheme}-theme`;
-  if (themeSelect) {
-    themeSelect.value = savedTheme;
+  const isDarkMode = localStorage.getItem(THEME_KEY) === "dark-mode" || 
+                     (!localStorage.getItem(THEME_KEY) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  
+  if (isDarkMode) {
+    document.body.classList.add("dark-mode");
+  } else {
+    document.body.classList.remove("dark-mode");
   }
+  updateThemeToggleIcon();
 }
 
-function initThemeSelector() {
-  if (!themeSelect) return;
-  
-  themeSelect.addEventListener("change", (e) => {
-    const selectedTheme = e.target.value;
-    document.body.className = `${selectedTheme}-theme`;
-    localStorage.setItem(THEME_KEY, selectedTheme);
-  });
+function initThemeToggle() {
+  if (!themeToggleBtn) return;
+  themeToggleBtn.addEventListener("click", toggleTheme);
+}
+
+function toggleTheme() {
+  const isDarkMode = document.body.classList.toggle("dark-mode");
+  localStorage.setItem(THEME_KEY, isDarkMode ? "dark-mode" : "light-mode");
+  updateThemeToggleIcon();
+}
+
+function updateThemeToggleIcon() {
+  if (!themeToggleBtn) return;
+  const isDarkMode = document.body.classList.contains("dark-mode");
+  themeToggleBtn.textContent = isDarkMode ? "☀️" : "🌙";
+  themeToggleBtn.setAttribute("aria-label", isDarkMode ? "Enable light mode" : "Enable dark mode");
 }
 
 // ============================================

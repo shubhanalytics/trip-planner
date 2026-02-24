@@ -27,27 +27,16 @@
                 <div class="music-player" id="musicPlayer" aria-label="Background music controls">
                     <div class="music-track">
                         <span class="music-icon" aria-hidden="true">🎵</span>
-                        <div class="music-meta">
-                            <span class="music-track-name" id="musicTrackName">Yun Hi Chala Chal Raahi 🚶</span>
-                            <span class="music-status" id="musicStatus">Paused</span>
-                        </div>
                     </div>
                     <div class="music-actions">
-                        <button class="music-btn music-btn-play" id="musicPlay" title="Play music" aria-label="Play music">▶ Play</button>
-                        <button class="music-btn music-btn-pause" id="musicPause" title="Pause music" aria-label="Pause music">⏸ Pause</button>
+                        <button class="music-btn music-btn-play" id="musicPlay" title="Play music" aria-label="Play music">▶</button>
+                        <button class="music-btn music-btn-pause" id="musicPause" title="Pause music" aria-label="Pause music">⏸</button>
                     </div>
                 </div>
                 <div class="theme-selector">
-                    <select id="themeSelect" title="Change theme">
-                        <option value="light">☀️ Light</option>
-                        <option value="dark">🌙 Dark</option>
-                        <option value="ocean">🌊 Ocean</option>
-                        <option value="forest">🌲 Forest</option>
-                        <option value="sunset">🌅 Sunset</option>
-                        <option value="aurora">✨ Aurora</option>
-                    </select>
+                    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Enable dark mode" title="Toggle light/dark mode">🌙</button>
                 </div>
-                <a class="favorites-shortcut" href="index.html" aria-label="Back to explorer" title="Back to explorer">
+                <a class="favorites-shortcut back-to-home" href="index.html" aria-label="Back to explorer" title="Back to explorer">
                     <span class="favorites-shortcut-icon" aria-hidden="true">🏠</span>
                 </a>
             </div>
