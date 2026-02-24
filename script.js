@@ -676,42 +676,47 @@ function initSectionTabs() {
   });
 
   const observedSectionIds = ["filtersSectionBlock", "results", "favoritesSection", "tipsSection"];
-  const observedSections = observedSectionIds
+  const getObservedSections = () => observedSectionIds
     .map((id) => document.getElementById(id))
-    .filter(Boolean);
+    .filter((section) => section && !section.classList.contains("hidden"));
 
-  if (!observedSections.length || !("IntersectionObserver" in window)) return;
-
-  let observer;
-
-  const setupObserver = () => {
-    if (observer) observer.disconnect();
-
-    const topMargin = -(getStickyOffset() + 16);
-
-    observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-      if (!visible) return;
-
-      const activeId = visible.target.id;
-      sectionTabs.forEach((tab) => {
-        tab.classList.toggle("active", tab.dataset.target === activeId);
-      });
-    }, {
-      root: null,
-      threshold: [0.15, 0.35, 0.6],
-      rootMargin: `${topMargin}px 0px -45% 0px`
+  const applyActiveTab = (activeId) => {
+    if (!activeId) return;
+    sectionTabs.forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.target === activeId);
     });
-
-    observedSections.forEach((section) => observer.observe(section));
   };
 
-  setupObserver();
-  window.addEventListener("resize", setupObserver);
-  window.addEventListener("orientationchange", setupObserver);
+  const updateActiveTabFromScroll = () => {
+    const observedSections = getObservedSections();
+    if (!observedSections.length) return;
+
+    const offsetLine = getStickyOffset() + 24;
+    let activeSectionId = observedSections[0].id;
+
+    observedSections.forEach((section) => {
+      if (section.getBoundingClientRect().top <= offsetLine) {
+        activeSectionId = section.id;
+      }
+    });
+
+    applyActiveTab(activeSectionId);
+  };
+
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateActiveTabFromScroll();
+      ticking = false;
+    });
+  };
+
+  updateActiveTabFromScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", updateActiveTabFromScroll);
+  window.addEventListener("orientationchange", updateActiveTabFromScroll);
 }
 
 function initQuickPresets() {

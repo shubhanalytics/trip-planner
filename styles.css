@@ -655,7 +655,7 @@ body {
 .results,
 #favoritesSection,
 #tipsSection {
-  scroll-margin-top: 140px;
+  scroll-margin-top: calc(var(--sticky-offset, 96px) + 12px);
 }
 
 .section-tabs + .filters-section {
