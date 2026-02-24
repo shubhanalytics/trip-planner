@@ -596,12 +596,15 @@ function initLocationPrompt() {
   }
 
   const status = localStorage.getItem(LOCATION_STATUS_KEY);
-  // Show modal on first visit or if location was never properly set
-  if (!status || (status !== "allowed" && status !== "skipped" && status !== "denied" && status !== "blocked-region")) {
+  // Show modal on first visit only - don't show if user already made a choice
+  if (!status) {
     // Delay modal slightly to ensure everything is loaded
     setTimeout(() => {
       openLocationModal();
     }, 500);
+  } else if (status === "blocked-region") {
+    // If previously blocked, don't show modal again
+    setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
   }
 }
 
