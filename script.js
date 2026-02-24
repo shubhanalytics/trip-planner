@@ -908,11 +908,19 @@ function initCarousel() {
   }
   
   function resetAutoCarousel() {
-    clearInterval(carouselInterval);
+    if (carouselInterval) {
+      clearInterval(carouselInterval);
+      carouselInterval = null;
+    }
     startAutoCarousel();
   }
   
   function startAutoCarousel() {
+    if (carouselInterval) {
+      clearInterval(carouselInterval);
+      carouselInterval = null;
+    }
+
     // Only auto-rotate on mobile
     if (window.innerWidth <= 768) {
       carouselInterval = setInterval(nextSlide, 4000); // Rotate every 4 seconds
@@ -920,17 +928,25 @@ function initCarousel() {
   }
   
   // Pause on hover
-  carousel.addEventListener("mouseenter", () => clearInterval(carouselInterval));
+  carousel.addEventListener("mouseenter", () => {
+    if (carouselInterval) {
+      clearInterval(carouselInterval);
+      carouselInterval = null;
+    }
+  });
   carousel.addEventListener("mouseleave", startAutoCarousel);
   
   // Handle window resize
   window.addEventListener("resize", () => {
     updateCarousel();
     const isNowMobile = window.innerWidth <= 768;
-    if (isNowMobile && !carouselInterval) {
+    if (isNowMobile) {
       startAutoCarousel();
     } else if (!isNowMobile) {
-      clearInterval(carouselInterval);
+      if (carouselInterval) {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+      }
     }
   });
   
