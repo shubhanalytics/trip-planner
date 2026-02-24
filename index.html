@@ -47,6 +47,10 @@
                         <option value="aurora">✨ Aurora</option>
                     </select>
                 </div>
+                <a class="favorites-shortcut" href="favorites.html" aria-label="Open saved destinations" title="Saved destinations">
+                    <span class="favorites-shortcut-icon" aria-hidden="true">❤️</span>
+                    <span class="favorites-shortcut-count" id="favoritesCount">0</span>
+                </a>
             </div>
         </div>
         <div class="header-trust">
@@ -107,7 +111,6 @@
         <nav class="page-tabs" aria-label="Page sections">
             <button type="button" class="page-tab active" data-target="filtersSectionBlock">Trip Explorer</button>
             <button type="button" class="page-tab" data-target="results">Destination Intelligence</button>
-            <button type="button" class="page-tab" data-target="favoritesSection">Your Shortlist</button>
             <button type="button" class="page-tab" data-target="tipsSection">Travel IQ</button>
         </nav>
 
@@ -209,15 +212,6 @@
                 <h3>Ready to discover your best-fit trip?</h3>
                 <p>Choose month, trip type, and vibe to unlock data-backed destination ideas.</p>
             </div>
-        </section>
-
-        <!-- Favorites Section -->
-        <section id="favoritesSection" class="favorites-section hidden">
-            <div class="section-head">
-                <h2>❤️ Your Favorites</h2>
-                <p>Your decision-ready shortlist for the next trip.</p>
-            </div>
-            <div id="favoritesList" class="destinations-grid"></div>
         </section>
 
         <!-- Testimonials -->

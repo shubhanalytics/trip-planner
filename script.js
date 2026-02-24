@@ -168,6 +168,7 @@ const locationStatusText = document.getElementById("locationStatusText");
 const locationMessage = document.getElementById("locationMessage");
 const favoritesSection = document.getElementById("favoritesSection");
 const favoritesList = document.getElementById("favoritesList");
+const favoritesCount = document.getElementById("favoritesCount");
 const dateDisplay = document.getElementById("dateDisplay");
 const timeDisplay = document.getElementById("timeDisplay");
 const pageTabs = document.querySelectorAll(".page-tab");
@@ -628,6 +629,7 @@ function init() {
   initUXEnhancements();
   initLocationPrompt();
   displayFavorites();
+  syncFavoritesBadge();
   updateDateAndTime();
   setInterval(updateDateAndTime, 1000); // Update time every second
   initTestimonialsAutoScroll();
@@ -662,11 +664,6 @@ function initPageTabs() {
       const targetId = tab.dataset.target;
       let targetElement = document.getElementById(targetId);
 
-      if (targetId === "favoritesSection" && favorites.length === 0) {
-        displayFavorites();
-        targetElement = document.getElementById("favoritesSection");
-      }
-
       if (!targetElement) return;
 
       pageTabs.forEach((item) => item.classList.remove("active"));
@@ -675,7 +672,7 @@ function initPageTabs() {
     });
   });
 
-  const observedSectionIds = ["filtersSectionBlock", "results", "favoritesSection", "tipsSection"];
+  const observedSectionIds = ["filtersSectionBlock", "results", "tipsSection"];
   const getObservedSections = () => observedSectionIds
     .map((id) => document.getElementById(id))
     .filter((section) => section && !section.classList.contains("hidden"));
@@ -1258,9 +1255,18 @@ function toggleFavorite(place, btn) {
   
   localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
   displayFavorites();
+  syncFavoritesBadge();
+}
+
+function syncFavoritesBadge() {
+  if (!favoritesCount) return;
+  favoritesCount.textContent = String(favorites.length);
+  favoritesCount.classList.toggle("visible", favorites.length > 0);
 }
 
 function displayFavorites() {
+  if (!favoritesSection || !favoritesList) return;
+
   if (!favorites.length) {
     favoritesSection.classList.remove("hidden");
     favoritesList.innerHTML = `
