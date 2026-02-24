@@ -659,9 +659,29 @@ function initLocationPrompt() {
   }
 }
 
+// Toast notification
+function showToast(message, duration = 3000) {
+  let toast = document.getElementById("toastNotification");
+  
+  // Create toast if it doesn't exist
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "toastNotification";
+    toast.className = "toast-notification";
+    document.body.appendChild(toast);
+  }
+  
+  toast.textContent = message;
+  toast.classList.add("show");
+  
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, duration);
+}
+
 function handleGenerateSmartPicks() {
   if (!monthSelect.value) {
-    updateResults();
+    showToast("📅 Please select a travel month to see destinations");
     return;
   }
 

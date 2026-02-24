@@ -724,6 +724,12 @@ body:not(.dark-mode) .page-tab.active {
   line-height: 1.25;
 }
 
+.required-indicator {
+  color: #ef4444;
+  margin-left: 0.3rem;
+  font-weight: 700;
+}
+
 .filters-section select,
 .filters-section input[type="number"] {
   height: 48px;
@@ -4237,4 +4243,28 @@ body:not(.dark-mode) .favorite-action-btn:hover {
   color: #ffffff !important;
   background: #4f46e5 !important;
   border-color: #4f46e5 !important;
+}
+
+/* Toast Notification */
+.toast-notification {
+  position: fixed;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #ffffff;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+  font-weight: 500;
+  font-size: 0.95rem;
+  z-index: 2000;
+  transition: bottom 0.3s ease;
+  max-width: 90%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.toast-notification.show {
+  bottom: 24px;
 }
