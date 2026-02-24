@@ -1281,53 +1281,176 @@ body.dark-mode .btn-favorite:hover {
 }
 
 /* Testimonials */
-.testimonials {
+.best-places-section {
   background: var(--card-bg);
-  border-radius: 15px;
+  border-radius: 16px;
   padding: 3rem 2rem;
   margin-bottom: 3rem;
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
+  box-shadow: 0 4px 16px var(--shadow-color);
+  overflow: visible;
 }
 
-.testimonials h2 {
+.best-places-header {
+  margin-bottom: 2.5rem;
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 1.75rem;
 }
 
-.testimonials-container {
-  overflow: hidden;
+.best-places-header h2 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  background: var(--ux-accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+.best-places-header p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin: 0;
+  opacity: 0.9;
+}
+
+.carousel-container {
   position: relative;
-}
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.testimonial-card {
-  background: var(--bg-secondary);
+  overflow: hidden;
   border-radius: 12px;
-  padding: 1.5rem;
-  border-left: 4px solid var(--accent-primary);
-  transition: var(--transition);
 }
 
-.testimonial-card:hover {
-  transform: translateX(10px);
+.carousel-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding: 1rem 0;
+  scroll-padding: 1rem;
+  scrollbar-width: none;
 }
 
-.testimonial-text {
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  width: 320px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.carousel-card {
+  background: var(--ux-surface);
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  padding: 1.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-height: 280px;
+}
+
+.carousel-card:hover {
+  transform: translateY(-8px) translateZ(0);
+  border-color: var(--ux-accent, var(--primary-color));
+  box-shadow: 0 12px 28px var(--shadow-color);
+  will-change: transform;
+}
+
+.carousel-place-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1.3;
+  min-height: 2.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.carousel-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 10px;
+}
+
+.carousel-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   font-size: 0.95rem;
   color: var(--text-secondary);
-  margin-bottom: 1rem;
-  font-style: italic;
 }
 
-.testimonial-author {
+.carousel-detail-icon {
+  font-size: 1.15rem;
+  opacity: 0.9;
+  min-width: 20px;
+}
+
+.carousel-vibes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.carousel-vibe-tag {
+  display: inline-block;
+  background: var(--ux-accent, rgba(102, 126, 234, 0.15));
+  color: var(--ux-accent, var(--primary-color));
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.carousel-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.carousel-btn {
+  background: var(--ux-accent, var(--primary-color));
+  border: none;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.carousel-btn:hover {
+  transform: scale(1.1) translateZ(0);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.carousel-btn:active {
+  transform: scale(0.95);
   color: var(--accent-primary);
 }
 
@@ -1851,6 +1974,114 @@ body.dark-mode .btn-favorite:hover {
   text-align: center;
   line-height: 1.5;
   opacity: 0.8;
+}
+
+/* Destination Detail Modal */
+.dest-detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dest-detail-title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.dest-detail-title-section h2 {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.dest-detail-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.dest-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.dest-detail-item {
+  background: var(--ux-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.dest-detail-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.dest-detail-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.dest-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dest-detail-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.dest-detail-vibes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.vibe-badge {
+  display: inline-block;
+  background: var(--ux-accent, rgba(102, 126, 234, 0.15));
+  color: var(--ux-accent, var(--primary-color));
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.dest-detail-favorite-btn {
+  background: var(--ux-accent, var(--primary-color));
+  border: none;
+  color: white;
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dest-detail-favorite-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.dest-detail-favorite-btn:active {
+  transform: scale(0.98);
 }
 
 .modal-close {
@@ -2478,45 +2709,35 @@ body.dark-mode .btn-favorite:hover {
   }
 
   /* Testimonials - Already optimized */
-  .testimonials {
+  .best-places-section {
     padding: 2rem 1.25rem;
     margin-bottom: 2rem;
     border-radius: 16px;
   }
 
-  .testimonials h2 {
+  .best-places-header h2 {
     font-size: 1.4rem;
     margin-bottom: 1.5rem;
   }
 
-  .testimonials::after {
-    content: '→ Swipe';
-    top: 2rem;
-    right: 1.25rem;
-    font-size: 0.85rem;
+  .carousel-track {
+    gap: 1rem;
+    padding: 0.75rem 0;
   }
 
-  .testimonials-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 1.25rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 1.5rem;
-    scroll-behavior: smooth;
-    touch-action: pan-x;
+  .carousel-item {
+    width: 260px;
   }
 
-  .testimonials-grid::-webkit-scrollbar {
-    display: none;
+  .carousel-card {
+    padding: 1.5rem;
+    min-height: 240px;
   }
 
-  .testimonial-card {
-    min-width: 85%;
-    scroll-snap-align: center;
-    flex-shrink: 0;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  .carousel-nav {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
     border: 2px solid var(--accent-primary);
     background: var(--card-bg);
     padding: 2rem 1.5rem;
@@ -2533,9 +2754,22 @@ body.dark-mode .btn-favorite:hover {
     margin-bottom: 1.25rem;
   }
 
-  .testimonial-author {
-    font-size: 0.95rem;
-    opacity: 0.9;
+  /* Carousel Mobile Responsive */
+  .best-places-section {
+    padding: 2rem 1.5rem;
+  }
+
+  .best-places-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .carousel-item {
+    width: 280px;
+  }
+
+  .carousel-card {
+    padding: 1.5rem;
+    min-height: 260px;
   }
 
   /* Tips Section */

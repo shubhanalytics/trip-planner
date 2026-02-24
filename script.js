@@ -175,6 +175,17 @@ const pageTabs = document.querySelectorAll(".page-tab");
 const presetChips = document.querySelectorAll(".preset-chip");
 const backToTopBtn = document.getElementById("backToTop");
 
+// Carousel elements
+const bestPlacesCarousel = document.getElementById("bestPlacesCarousel");
+const carouselTrack = document.getElementById("carouselTrack");
+const carouselPrevBtn = document.getElementById("carouselPrev");
+const carouselNextBtn = document.getElementById("carouselNext");
+const bestPlacesSection = document.getElementById("bestPlacesSection");
+const monthNameDisplay = document.getElementById("monthName");
+
+// Track if filters have been applied
+let hasFiltersApplied = false;
+
 // ============================================
 // SOURCE CITATIONS MAPPING
 // ============================================
@@ -635,7 +646,17 @@ function init() {
   syncFavoritesBadge();
   updateDateAndTime();
   setInterval(updateDateAndTime, 1000); // Update time every second
-  initTestimonialsAutoScroll();
+  // Initialize carousel with current month
+  const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
+  const months = Object.keys(destinationData.india);
+  const displayMonth = months.includes(currentMonth) ? currentMonth : months[0];
+  initBestPlacesCarousel(displayMonth);
+  // Update carousel when month is selected
+  monthSelect.addEventListener("change", () => {
+    if (monthSelect.value) {
+      initBestPlacesCarousel(monthSelect.value);
+    }
+  });
 }
 
 function initUXEnhancements() {
@@ -778,48 +799,7 @@ function initSmartAnchors() {
   });
 }
 
-// ============================================
-// TESTIMONIALS AUTO-SCROLL (Mobile)
-// ============================================
-function initTestimonialsAutoScroll() {
-  const testimonialsGrid = document.querySelector('.testimonials-grid');
-  if (!testimonialsGrid) return;
-  
-  let autoScrollInterval;
-  const shouldAutoScroll = false;
-  
-  function startAutoScroll() {
-    if (autoScrollInterval) clearInterval(autoScrollInterval);
-    
-    if (window.innerWidth <= 480 && shouldAutoScroll) {
-      let scrollSpeed = 1;
-      
-      autoScrollInterval = setInterval(() => {
-        testimonialsGrid.scrollLeft += scrollSpeed;
-        
-        // Reset to beginning when reaching the end
-        if (testimonialsGrid.scrollLeft >= testimonialsGrid.scrollWidth - testimonialsGrid.clientWidth) {
-          testimonialsGrid.scrollLeft = 0;
-        }
-      }, 30);
-    }
-  }
-  
-  // Start auto-scroll
-  startAutoScroll();
-  
-  // Restart on window resize
-  window.addEventListener('resize', startAutoScroll);
-  
-  // Pause on touch/mouse interaction
-  testimonialsGrid.addEventListener('touchstart', () => {
-    if (autoScrollInterval) clearInterval(autoScrollInterval);
-  });
-  
-  testimonialsGrid.addEventListener('touchend', () => {
-    setTimeout(startAutoScroll, 2000);
-  });
-}
+
 
 // ============================================
 // DATE & TIME DISPLAY
@@ -988,6 +968,176 @@ function updateStats(destinations) {
 }
 
 // ============================================
+// CAROUSEL FUNCTIONS
+// ============================================
+let carouselAutoScrollInterval;
+
+function initBestPlacesCarousel(monthName) {
+  // Get destinations for the current/selected month
+  const regionData = destinationData.india[monthName] || [];
+  
+  // Update month name in header
+  if (monthNameDisplay) {
+    monthNameDisplay.textContent = monthName;
+  }
+  
+  // Clear existing carousel items
+  if (carouselTrack) {
+    carouselTrack.innerHTML = "";
+  }
+  
+  // Create carousel items
+  regionData.forEach((destination) => {
+    const item = document.createElement("div");
+    item.className = "carousel-item";
+    item.innerHTML = `
+      <div class="carousel-card">
+        <div class="carousel-place-name">${destination.place}</div>
+        <div class="carousel-details">
+          <div class="carousel-detail-item">
+            <span class="carousel-detail-icon">🌡️</span>
+            <span>${destination.temperature}</span>
+          </div>
+          <div class="carousel-detail-item">
+            <span class="carousel-detail-icon">💰</span>
+            <span>${destination.expense}</span>
+          </div>
+          <div class="carousel-detail-item">
+            <span class="carousel-detail-icon">⭐</span>
+            <span>${destination.rating}/5</span>
+          </div>
+        </div>
+        <div class="carousel-vibes">
+          ${destination.vibes.map(vibe => `<span class="carousel-vibe-tag">${vibe}</span>`).join("")}
+        </div>
+      </div>
+    `;
+    item.addEventListener("click", () => {
+      // Show destination details in modal when clicked
+      const detailContent = createDestinationDetailContent(destination, "india");
+      if (modalBody) {
+        modalBody.innerHTML = detailContent;
+      }
+      if (modal) {
+        modal.classList.add("active");
+      }
+    });
+    carouselTrack.appendChild(item);
+  });
+  
+  // Setup carousel navigation
+  setupCarouselNavigation();
+  startCarouselAutoScroll();
+}
+
+function setupCarouselNavigation() {
+  if (carouselPrevBtn) {
+    carouselPrevBtn.addEventListener("click", () => scrollCarousel(-1));
+  }
+  if (carouselNextBtn) {
+    carouselNextBtn.addEventListener("click", () => scrollCarousel(1));
+  }
+}
+
+function scrollCarousel(direction) {
+  if (!carouselTrack) return;
+  
+  const itemWidth = carouselTrack.querySelector(".carousel-item")?.offsetWidth || 350;
+  const scrollAmount = itemWidth + 20; // 20px gap
+  
+  carouselTrack.scrollBy({
+    left: direction > 0 ? scrollAmount : -scrollAmount,
+    behavior: "smooth"
+  });
+}
+
+function startCarouselAutoScroll() {
+  if (carouselAutoScrollInterval) {
+    clearInterval(carouselAutoScrollInterval);
+  }
+  
+  // Auto-scroll every 5 seconds on desktop views, disabled on mobile
+  if (window.innerWidth > 768) {
+    carouselAutoScrollInterval = setInterval(() => {
+      scrollCarousel(1);
+    }, 5000);
+  }
+  
+  // Pause auto-scroll on hover/interaction
+  if (carouselTrack) {
+    carouselTrack.addEventListener("mouseenter", () => {
+      if (carouselAutoScrollInterval) clearInterval(carouselAutoScrollInterval);
+    });
+    carouselTrack.addEventListener("mouseleave", startCarouselAutoScroll);
+    carouselTrack.addEventListener("touchstart", () => {
+      if (carouselAutoScrollInterval) clearInterval(carouselAutoScrollInterval);
+    });
+    carouselTrack.addEventListener("touchend", startCarouselAutoScroll);
+  }
+}
+
+function createDestinationDetailContent(destination, region) {
+  const rating = destination.rating || 0;
+  const stars = "⭐".repeat(Math.round(rating));
+  
+  const travelCost = userLocation ? estimateTravelCost(userLocation, destination, region) : "Contact for quote";
+  
+  return `
+    <div class="dest-detail-container">
+      <div class="dest-detail-title-section">
+        <h2>${destination.place}</h2>
+        <div class="dest-detail-rating">${stars} <span>${rating}/5</span></div>
+      </div>
+      
+      <div class="dest-detail-grid">
+        <div class="dest-detail-item">
+          <div class="dest-detail-label">🌡️ Temperature</div>
+          <div class="dest-detail-value">${destination.temperature}</div>
+        </div>
+        <div class="dest-detail-item">
+          <div class="dest-detail-label">💰 Budget</div>
+          <div class="dest-detail-value">${destination.expense}</div>
+        </div>
+        <div class="dest-detail-item">
+          <div class="dest-detail-label">⏱️ Duration</div>
+          <div class="dest-detail-value">${destination.duration}</div>
+        </div>
+        <div class="dest-detail-item">
+          <div class="dest-detail-label">🚗 Travel Cost</div>
+          <div class="dest-detail-value">${travelCost}</div>
+        </div>
+      </div>
+      
+      <div class="dest-detail-section">
+        <div class="dest-detail-label">✨ Vibes</div>
+        <div class="dest-detail-vibes">
+          ${destination.vibes.map(vibe => `<span class="vibe-badge">${vibe}</span>`).join("")}
+        </div>
+      </div>
+      
+      <div class="dest-detail-section">
+        <div class="dest-detail-label">🎯 Best For</div>
+        <div class="dest-detail-text">${destination.bestFor}</div>
+      </div>
+      
+      <div class="dest-detail-section">
+        <div class="dest-detail-label">🏛️ Attractions</div>
+        <div class="dest-detail-text">${destination.attractions}</div>
+      </div>
+      
+      <div class="dest-detail-section">
+        <div class="dest-detail-label">🚗 Travel Options</div>
+        <div class="dest-detail-text">${destination.travel}</div>
+      </div>
+      
+      <button class="dest-detail-favorite-btn" onclick="toggleFavorite({'place': '${destination.place}', 'region': '${region}'})">
+        ❤️ Save to Favorites
+      </button>
+    </div>
+  `;
+}
+
+// ============================================
 // FILTER MANAGEMENT
 // ============================================
 function resetAllFilters() {
@@ -1073,6 +1223,11 @@ function updateResults() {
   const suggestions = getNearbyRecommendations(baseDestinations.map(dest => ({ ...dest, region })), 3);
   displayDestinations(destinations, month, region, travelerCount, notice, suggestions);
   updateStats(destinations);
+  hasFiltersApplied = true;
+  // Show stats section when filters are applied
+  if (statsSection) {
+    statsSection.style.display = "grid";
+  }
 }
 
 // ============================================
@@ -1086,6 +1241,10 @@ function displayPlaceholder() {
       <p>Choose month, trip type, and vibe to unlock data-backed destination ideas.</p>
     </div>
   `;
+  // Hide stats section when no filters applied
+  if (statsSection) {
+    statsSection.style.display = "none";
+  }
 }
 
 function displayDestinations(destinations, month, region, travelerCount, notice = "", suggestions = []) {
