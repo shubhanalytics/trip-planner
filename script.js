@@ -155,7 +155,7 @@ const vibeFilter = document.getElementById("vibeFilter");
 const resetBtn = document.getElementById("resetFilters");
 const results = document.getElementById("results");
 const statsSection = document.getElementById("statsSection");
-const themeSelect = document.getElementById("themeSelect");
+const themeToggleBtn = document.getElementById("themeToggle");
 const modal = document.getElementById("detailsModal");
 const modalBody = document.getElementById("modalBody");
 const modalClose = modal ? modal.querySelector(".modal-close") : null;
@@ -170,7 +170,6 @@ const favoritesSection = document.getElementById("favoritesSection");
 const favoritesList = document.getElementById("favoritesList");
 const favoritesCount = document.getElementById("favoritesCount");
 const dateDisplay = document.getElementById("dateDisplay");
-const timeDisplay = document.getElementById("timeDisplay");
 const pageTabs = document.querySelectorAll(".page-tab");
 const presetChips = document.querySelectorAll(".preset-chip");
 const backToTopBtn = document.getElementById("backToTop");
@@ -674,7 +673,7 @@ function init() {
   displayFavorites();
   syncFavoritesBadge();
   updateDateAndTime();
-  setInterval(updateDateAndTime, 1000); // Update time every second
+  setInterval(updateDateAndTime, 60000);
   // Initialize carousel with current month
   const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
   const months = Object.keys(destinationData.india);
@@ -834,17 +833,12 @@ function initSmartAnchors() {
 // DATE & TIME DISPLAY
 // ============================================
 function updateDateAndTime() {
+  if (!dateDisplay) return;
   const now = new Date();
-  
-  // Format date
-  const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-  const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+
+  const dateOptions = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
+  const formattedDate = now.toLocaleDateString("en-US", dateOptions);
   dateDisplay.textContent = formattedDate;
-  
-  // Format time with AM/PM
-  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-  const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
-  timeDisplay.textContent = formattedTime;
 }
 
 // ============================================
@@ -869,8 +863,9 @@ function setupEventListeners() {
   // Reset button
   resetBtn.addEventListener("click", resetAllFilters);
   
-  // Theme selector - immediate change
-  themeSelect.addEventListener("change", changeTheme);
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener("click", toggleTheme);
+  }
   
   // Traveler count stepper buttons
   const increaseBtn = document.getElementById("increaseTravelers");
@@ -914,32 +909,31 @@ function setupEventListeners() {
   travelerCountInput.addEventListener("change", clearPresetSelection);
 }
 
-function changeTheme() {
-  const theme = themeSelect.value;
-  
-  // Remove all theme classes
-  document.body.classList.remove("dark-mode", "ocean-theme", "forest-theme", "sunset-theme", "aurora-theme");
-  
-  // Apply selected theme
-  if (theme === "dark") {
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+  document.body.classList.remove("dark-mode");
+  if (isDark) {
     document.body.classList.add("dark-mode");
-  } else if (theme === "ocean") {
-    document.body.classList.add("ocean-theme");
-  } else if (theme === "forest") {
-    document.body.classList.add("forest-theme");
-  } else if (theme === "sunset") {
-    document.body.classList.add("sunset-theme");
-  } else if (theme === "aurora") {
-    document.body.classList.add("aurora-theme");
   }
-  
-  localStorage.setItem(THEME_KEY, theme);
+
+  if (themeToggleBtn) {
+    themeToggleBtn.textContent = isDark ? "☀️" : "🌙";
+    themeToggleBtn.setAttribute("aria-label", isDark ? "Enable light mode" : "Enable dark mode");
+    themeToggleBtn.setAttribute("title", isDark ? "Switch to light mode" : "Switch to dark mode");
+  }
+
+  localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+}
+
+function toggleTheme() {
+  const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+  applyTheme(nextTheme);
 }
 
 function loadTheme() {
-  const theme = localStorage.getItem(THEME_KEY) || "light";
-  themeSelect.value = theme;
-  changeTheme();
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  const theme = savedTheme === "dark" ? "dark" : "light";
+  applyTheme(theme);
 }
 
 // ============================================
