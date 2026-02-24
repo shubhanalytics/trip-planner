@@ -871,7 +871,7 @@ function updateDateAndTime() {
   if (!dateDisplay) return;
   const now = new Date();
 
-  const dateOptions = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
+  const dateOptions = { year: "numeric", month: "short", day: "numeric" };
   const formattedDate = now.toLocaleDateString("en-US", dateOptions);
   dateDisplay.textContent = formattedDate;
 }
