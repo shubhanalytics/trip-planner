@@ -609,12 +609,12 @@ body {
 }
 
 .section-tabs {
-  position: fixed;
-  top: var(--sticky-offset, 92px);
-  left: 0;
-  right: 0;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
   z-index: 90;
-  width: 100%;
+  width: auto;
   margin: 0;
   padding: 0.75rem 1.5rem;
   display: flex;
@@ -659,7 +659,7 @@ body {
 }
 
 .section-tabs + .filters-section {
-  margin-top: 6rem;
+  margin-top: 0;
 }
 
 /* Filters Section */
@@ -2138,7 +2138,7 @@ body.dark-mode .btn-favorite:hover {
     padding: 0.5rem 1.5rem;
     padding-bottom: 0.35rem;
     scrollbar-width: none;
-    top: var(--sticky-offset, 86px);
+    top: auto;
   }
 
   .section-tabs::-webkit-scrollbar {
