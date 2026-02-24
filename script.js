@@ -674,17 +674,6 @@ function init() {
   syncFavoritesBadge();
   updateDateAndTime();
   setInterval(updateDateAndTime, 60000);
-  // Initialize carousel with current month
-  const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
-  const months = Object.keys(destinationData.india);
-  const displayMonth = months.includes(currentMonth) ? currentMonth : months[0];
-  initBestPlacesCarousel(displayMonth);
-  // Update carousel when month is selected
-  monthSelect.addEventListener("change", () => {
-    if (monthSelect.value) {
-      initBestPlacesCarousel(monthSelect.value);
-    }
-  });
 }
 
 function initUXEnhancements() {
@@ -994,8 +983,22 @@ function updateStats(destinations) {
 // CAROUSEL FUNCTIONS
 // ============================================
 let carouselAutoScrollInterval;
+let isCarouselNavigationBound = false;
+let isCarouselInteractionBound = false;
+
+function updateCarouselNavState() {
+  if (!carouselTrack || !carouselPrevBtn || !carouselNextBtn) return;
+
+  const maxScrollLeft = Math.max(0, carouselTrack.scrollWidth - carouselTrack.clientWidth);
+  const atStart = carouselTrack.scrollLeft <= 2;
+  const atEnd = carouselTrack.scrollLeft >= maxScrollLeft - 2;
+
+  carouselPrevBtn.disabled = atStart;
+  carouselNextBtn.disabled = atEnd;
+}
 
 function initBestPlacesCarousel(monthName) {
+  if (!carouselTrack) return;
   // Get destinations for the current/selected month
   const regionData = destinationData.india[monthName] || [];
   
@@ -1007,6 +1010,7 @@ function initBestPlacesCarousel(monthName) {
   // Clear existing carousel items
   if (carouselTrack) {
     carouselTrack.innerHTML = "";
+    carouselTrack.scrollLeft = 0;
   }
   
   // Create carousel items
@@ -1054,22 +1058,32 @@ function initBestPlacesCarousel(monthName) {
 }
 
 function setupCarouselNavigation() {
-  if (carouselPrevBtn) {
+  if (!carouselTrack || !carouselPrevBtn || !carouselNextBtn) return;
+  if (!isCarouselNavigationBound) {
     carouselPrevBtn.addEventListener("click", () => scrollCarousel(-1));
-  }
-  if (carouselNextBtn) {
     carouselNextBtn.addEventListener("click", () => scrollCarousel(1));
+    carouselTrack.addEventListener("scroll", updateCarouselNavState, { passive: true });
+    window.addEventListener("resize", updateCarouselNavState);
+    isCarouselNavigationBound = true;
   }
+
+  updateCarouselNavState();
 }
 
 function scrollCarousel(direction) {
   if (!carouselTrack) return;
-  
-  const itemWidth = carouselTrack.querySelector(".carousel-item")?.offsetWidth || 350;
-  const scrollAmount = itemWidth + 20; // 20px gap
-  
-  carouselTrack.scrollBy({
-    left: direction > 0 ? scrollAmount : -scrollAmount,
+
+  const itemWidth = carouselTrack.querySelector(".carousel-item")?.offsetWidth || 320;
+  const computedGap = Number.parseFloat(getComputedStyle(carouselTrack).columnGap || getComputedStyle(carouselTrack).gap || "24");
+  const scrollAmount = itemWidth + (Number.isNaN(computedGap) ? 24 : computedGap);
+  const maxScrollLeft = Math.max(0, carouselTrack.scrollWidth - carouselTrack.clientWidth);
+  const targetScrollLeft = Math.min(
+    maxScrollLeft,
+    Math.max(0, carouselTrack.scrollLeft + (direction > 0 ? scrollAmount : -scrollAmount))
+  );
+
+  carouselTrack.scrollTo({
+    left: targetScrollLeft,
     behavior: "smooth"
   });
 }
@@ -1082,12 +1096,18 @@ function startCarouselAutoScroll() {
   // Auto-scroll every 5 seconds on desktop views, disabled on mobile
   if (window.innerWidth > 768) {
     carouselAutoScrollInterval = setInterval(() => {
-      scrollCarousel(1);
+      if (!carouselTrack) return;
+      const maxScrollLeft = Math.max(0, carouselTrack.scrollWidth - carouselTrack.clientWidth);
+      if (carouselTrack.scrollLeft >= maxScrollLeft - 2) {
+        carouselTrack.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        scrollCarousel(1);
+      }
     }, 5000);
   }
-  
+
   // Pause auto-scroll on hover/interaction
-  if (carouselTrack) {
+  if (carouselTrack && !isCarouselInteractionBound) {
     carouselTrack.addEventListener("mouseenter", () => {
       if (carouselAutoScrollInterval) clearInterval(carouselAutoScrollInterval);
     });
@@ -1096,7 +1116,10 @@ function startCarouselAutoScroll() {
       if (carouselAutoScrollInterval) clearInterval(carouselAutoScrollInterval);
     });
     carouselTrack.addEventListener("touchend", startCarouselAutoScroll);
+    isCarouselInteractionBound = true;
   }
+
+  updateCarouselNavState();
 }
 
 function createDestinationDetailContent(destination, region) {
