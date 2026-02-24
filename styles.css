@@ -4516,6 +4516,7 @@ body:not(.dark-mode) .favorite-action-btn:hover {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  padding-left: 2.1rem !important;
   padding-right: 2.1rem !important;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2398a9d8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -4529,6 +4530,19 @@ body:not(.dark-mode) .favorite-action-btn:hover {
 
 .filters-section #travelerCount {
   text-align: center !important;
+}
+
+/* Final axis-lock for filter label/value alignment */
+.filters-section .filter-group {
+  justify-items: center !important;
+  align-items: start !important;
+}
+
+.filters-section .filter-group > .filter-label,
+.filters-section .filter-group > select,
+.filters-section .filter-group > .traveler-stepper {
+  width: 100% !important;
+  margin-inline: auto !important;
 }
 
 /* Final Travel IQ layout guards */
