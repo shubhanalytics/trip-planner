@@ -429,25 +429,6 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-.datetime {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.2rem;
-}
-
-.date-display {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.time-display {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--accent-primary);
-}
-
 .theme-selector {
   display: flex;
   align-items: center;
@@ -2293,10 +2274,6 @@ body.dark-mode .btn-favorite:hover {
   .header-right {
     gap: 1rem;
   }
-
-  .datetime {
-    display: none;
-  }
 }
 
 @media (max-width: 768px) {
@@ -2416,10 +2393,6 @@ body.dark-mode .btn-favorite:hover {
     min-width: 40px;
     min-height: 40px;
     font-size: 0.95rem;
-  }
-
-  .datetime {
-    display: none;
   }
 
   .theme-toggle {

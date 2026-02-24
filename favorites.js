@@ -15,8 +15,6 @@ const musicPlay = document.getElementById("musicPlay");
 const musicPause = document.getElementById("musicPause");
 const musicTrackName = document.getElementById("musicTrackName");
 const musicStatus = document.getElementById("musicStatus");
-const dateDisplay = document.getElementById("dateDisplay");
-const timeDisplay = document.getElementById("timeDisplay");
 
 // State
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
@@ -29,7 +27,6 @@ function init() {
   loadTheme();
   loadFavorites();
   initThemeSelector();
-  initClock();
   initMusicPlayer();
   
   // Clear all button
@@ -299,28 +296,6 @@ function showDetailsModal(dest) {
       modal.remove();
     }
   });
-}
-
-// ============================================
-// CLOCK & DATE
-// ============================================
-function initClock() {
-  updateDateTime();
-  setInterval(updateDateTime, 1000);
-}
-
-function updateDateTime() {
-  const now = new Date();
-  
-  if (dateDisplay) {
-    const dateOptions = { weekday: "short", month: "short", day: "numeric", year: "numeric" };
-    dateDisplay.textContent = now.toLocaleDateString("en-US", dateOptions);
-  }
-  
-  if (timeDisplay) {
-    const timeOptions = { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true };
-    timeDisplay.textContent = now.toLocaleTimeString("en-US", timeOptions);
-  }
 }
 
 // ============================================

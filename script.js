@@ -169,7 +169,6 @@ const locationMessage = document.getElementById("locationMessage");
 const favoritesSection = document.getElementById("favoritesSection");
 const favoritesList = document.getElementById("favoritesList");
 const favoritesCount = document.getElementById("favoritesCount");
-const dateDisplay = document.getElementById("dateDisplay");
 const pageTabs = document.querySelectorAll(".page-tab");
 const presetChips = document.querySelectorAll(".preset-chip");
 const backToTopBtn = document.getElementById("backToTop");
@@ -718,8 +717,6 @@ function init() {
   initLocationPrompt();
   displayFavorites();
   syncFavoritesBadge();
-  updateDateAndTime();
-  setInterval(updateDateAndTime, 60000);
 }
 
 function initUXEnhancements() {
@@ -863,18 +860,6 @@ function initSmartAnchors() {
 }
 
 
-
-// ============================================
-// DATE & TIME DISPLAY
-// ============================================
-function updateDateAndTime() {
-  if (!dateDisplay) return;
-  const now = new Date();
-
-  const dateOptions = { year: "numeric", month: "short", day: "numeric" };
-  const formattedDate = now.toLocaleDateString("en-US", dateOptions);
-  dateDisplay.textContent = formattedDate;
-}
 
 // ============================================
 // THEME MANAGEMENT
