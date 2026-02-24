@@ -973,7 +973,8 @@ function toggleTheme() {
 
 function loadTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY);
-  const theme = (savedTheme === "dark-mode" || savedTheme === "dark") ? "dark-mode" : "light-mode";
+  // Default to dark mode if no saved theme exists
+  const theme = (savedTheme === "light-mode") ? "light-mode" : "dark-mode";
   applyTheme(theme);
 }
 
