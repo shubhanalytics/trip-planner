@@ -351,6 +351,7 @@ const LOCATION_STATUS_KEY = "wanderhub_location_status";
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
 let userLocation = null;
 let isRegionRestricted = false;
+let isLocationPromptPending = false;
 
 // Helper function to get source citation
 function getSource(place) {
@@ -533,11 +534,20 @@ function requestLocationAccess() {
       updateLocationStatusUI(true);
       setRegionRestriction(false);
       closeLocationModal();
+      if (isLocationPromptPending) {
+        isLocationPromptPending = false;
+        updateResults();
+      }
     },
     () => {
       localStorage.setItem(LOCATION_STATUS_KEY, "denied");
       handleLocationError("We couldn't access your location. You can enable it anytime in browser settings.");
       updateLocationStatusUI(false);
+      closeLocationModal();
+      if (isLocationPromptPending) {
+        isLocationPromptPending = false;
+        updateResults();
+      }
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
   );
@@ -572,6 +582,10 @@ function initLocationPrompt() {
       localStorage.setItem(LOCATION_STATUS_KEY, "skipped");
       updateLocationStatusUI(false);
       closeLocationModal();
+      if (isLocationPromptPending) {
+        isLocationPromptPending = false;
+        updateResults();
+      }
     });
   }
   if (locationModalClose) {
@@ -596,16 +610,28 @@ function initLocationPrompt() {
   }
 
   const status = localStorage.getItem(LOCATION_STATUS_KEY);
-  // Show modal on first visit only - don't show if user already made a choice
-  if (!status) {
-    // Delay modal slightly to ensure everything is loaded
-    setTimeout(() => {
-      openLocationModal();
-    }, 500);
-  } else if (status === "blocked-region") {
+  if (status === "blocked-region") {
     // If previously blocked, don't show modal again
     setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
   }
+}
+
+function handleGenerateSmartPicks() {
+  if (!monthSelect.value) {
+    updateResults();
+    return;
+  }
+
+  const locationStatus = localStorage.getItem(LOCATION_STATUS_KEY);
+  const shouldAskLocation = !userLocation && !locationStatus;
+
+  if (shouldAskLocation) {
+    isLocationPromptPending = true;
+    openLocationModal();
+    return;
+  }
+
+  updateResults();
 }
 
 // Auto-scroll to results section
@@ -838,7 +864,7 @@ function setupEventListeners() {
   const applyBtn = document.getElementById("applyFilters");
   
   // Apply button - triggers filter search
-  applyBtn.addEventListener("click", updateResults);
+  applyBtn.addEventListener("click", handleGenerateSmartPicks);
   
   // Reset button
   resetBtn.addEventListener("click", resetAllFilters);
@@ -1636,21 +1662,3 @@ updateMusicUI(false, "Paused");
 // START APPLICATION
 // ============================================
 init();
-
-// Auto-reset location on page refresh/exit
-window.addEventListener("beforeunload", () => {
-  localStorage.removeItem(LOCATION_KEY);
-  localStorage.removeItem(LOCATION_STATUS_KEY);
-});
-
-// Also reset location on page load to show modal every time
-window.addEventListener("load", () => {
-  // Clear location data so modal shows again
-  localStorage.removeItem(LOCATION_KEY);
-  // Reset status to trigger modal
-  localStorage.removeItem(LOCATION_STATUS_KEY);
-  // Re-trigger location prompt after a short delay
-  setTimeout(() => {
-    initLocationPrompt();
-  }, 300);
-});
