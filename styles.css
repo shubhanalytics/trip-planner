@@ -2201,6 +2201,8 @@ body.dark-mode .btn-favorite:hover {
   --ux-accent: #66d9ff;
   --ux-accent-2: #ff4fd8;
   --ux-shadow: 0 14px 36px rgba(2, 6, 23, 0.45);
+  --ux-section-gap: 1.4rem;
+  --ux-section-gap-mobile: 1rem;
 }
 
 body {
@@ -2249,6 +2251,11 @@ body {
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   box-shadow: 0 10px 28px rgba(2, 6, 23, 0.35) !important;
+}
+
+.header-content,
+.header-trust {
+  max-width: 1340px !important;
 }
 
 .logo h1 {
@@ -2703,6 +2710,52 @@ body {
   transform: translateY(0);
 }
 
+.container > .hero,
+.container > .page-tabs,
+.container > .filters-section,
+.container > .data-notice,
+.container > .stats-section,
+.container > .results,
+.container > .favorites-section,
+.container > .testimonials,
+.container > .tips-section {
+  margin: 0 0 var(--ux-section-gap) 0 !important;
+}
+
+.container > .quick-start {
+  margin: 0 auto var(--ux-section-gap) auto !important;
+  padding: 0 !important;
+  max-width: none !important;
+}
+
+.quick-step,
+.destination-card,
+.testimonial-card,
+.tip-card,
+.trust-status {
+  overflow-wrap: anywhere;
+}
+
+.page-tab {
+  min-height: 44px;
+}
+
+.section-head h2,
+.quick-start h2,
+.testimonials h2,
+.tips-section h2,
+.favorites-section h2 {
+  color: #f3f8ff !important;
+}
+
+.section-head p,
+.quick-step p,
+.testimonial-text,
+.data-notice p,
+.placeholder-state p {
+  color: var(--ux-muted) !important;
+}
+
 @media (max-width: 900px) {
   .header-content {
     gap: 0.6rem;
@@ -2722,6 +2775,30 @@ body {
 }
 
 @media (max-width: 640px) {
+  .page-tabs {
+    padding: 0.5rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .page-tab {
+    min-height: 44px;
+    padding: 0.55rem 0.85rem !important;
+  }
+
+  .container > .hero,
+  .container > .quick-start,
+  .container > .page-tabs,
+  .container > .filters-section,
+  .container > .data-notice,
+  .container > .stats-section,
+  .container > .results,
+  .container > .favorites-section,
+  .container > .testimonials,
+  .container > .tips-section {
+    margin-bottom: var(--ux-section-gap-mobile) !important;
+  }
+
   .hero {
     padding: 2.5rem 1.15rem !important;
   }
