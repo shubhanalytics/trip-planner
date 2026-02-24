@@ -37,8 +37,9 @@ function init() {
 // THEME MANAGEMENT
 // ============================================
 function loadTheme() {
-  const isDarkMode = localStorage.getItem(THEME_KEY) === "dark-mode" || 
-                     (!localStorage.getItem(THEME_KEY) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  const isDarkMode = savedTheme === "dark-mode" || savedTheme === "dark" || 
+                     (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
   
   if (isDarkMode) {
     document.body.classList.add("dark-mode");

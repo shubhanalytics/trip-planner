@@ -363,8 +363,8 @@ function clearUnnecessaryCache() {
   }
 
   const savedTheme = localStorage.getItem(THEME_KEY);
-  if (savedTheme && savedTheme !== "light" && savedTheme !== "dark") {
-    localStorage.setItem(THEME_KEY, "light");
+  if (savedTheme && savedTheme !== "light-mode" && savedTheme !== "dark-mode") {
+    localStorage.setItem(THEME_KEY, "light-mode");
   }
 
   const rawLocation = localStorage.getItem(LOCATION_KEY);
@@ -931,7 +931,7 @@ function setupEventListeners() {
 }
 
 function applyTheme(theme) {
-  const isDark = theme === "dark";
+  const isDark = theme === "dark-mode" || theme === "dark";
   document.body.classList.remove("dark-mode");
   if (isDark) {
     document.body.classList.add("dark-mode");
@@ -943,17 +943,17 @@ function applyTheme(theme) {
     themeToggleBtn.setAttribute("title", isDark ? "Switch to light mode" : "Switch to dark mode");
   }
 
-  localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+  localStorage.setItem(THEME_KEY, isDark ? "dark-mode" : "light-mode");
 }
 
 function toggleTheme() {
-  const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+  const nextTheme = document.body.classList.contains("dark-mode") ? "light-mode" : "dark-mode";
   applyTheme(nextTheme);
 }
 
 function loadTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY);
-  const theme = savedTheme === "dark" ? "dark" : "light";
+  const theme = (savedTheme === "dark-mode" || savedTheme === "dark") ? "dark-mode" : "light-mode";
   applyTheme(theme);
 }
 
