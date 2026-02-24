@@ -347,10 +347,64 @@ const FAVORITES_KEY = "wanderhub_favorites";
 const THEME_KEY = "wanderhub_theme";
 const LOCATION_KEY = "wanderhub_location";
 const LOCATION_STATUS_KEY = "wanderhub_location_status";
+const CACHE_VERSION_KEY = "wanderhub_cache_version";
+const CURRENT_CACHE_VERSION = "2026-02-24";
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
 let userLocation = null;
 let isRegionRestricted = false;
 let isLocationPromptPending = false;
+
+function clearUnnecessaryCache() {
+  const cacheVersion = localStorage.getItem(CACHE_VERSION_KEY);
+
+  if (cacheVersion !== CURRENT_CACHE_VERSION) {
+    localStorage.removeItem("wanderhub_location_temp");
+    localStorage.removeItem("wanderhub_theme_variant");
+    localStorage.setItem(CACHE_VERSION_KEY, CURRENT_CACHE_VERSION);
+  }
+
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  if (savedTheme && savedTheme !== "light" && savedTheme !== "dark") {
+    localStorage.setItem(THEME_KEY, "light");
+  }
+
+  const rawLocation = localStorage.getItem(LOCATION_KEY);
+  if (rawLocation) {
+    try {
+      const parsed = JSON.parse(rawLocation);
+      const hasValidCoords = Number.isFinite(parsed?.latitude) && Number.isFinite(parsed?.longitude);
+      const timestamp = new Date(parsed?.timestamp || 0).getTime();
+      const isFresh = Number.isFinite(timestamp) && (Date.now() - timestamp) < (24 * 60 * 60 * 1000);
+
+      if (!hasValidCoords || !isFresh) {
+        localStorage.removeItem(LOCATION_KEY);
+        if (localStorage.getItem(LOCATION_STATUS_KEY) === "allowed") {
+          localStorage.removeItem(LOCATION_STATUS_KEY);
+        }
+      }
+    } catch {
+      localStorage.removeItem(LOCATION_KEY);
+      if (localStorage.getItem(LOCATION_STATUS_KEY) === "allowed") {
+        localStorage.removeItem(LOCATION_STATUS_KEY);
+      }
+    }
+  }
+}
+
+function finalizePendingLocationFlow() {
+  if (!isLocationPromptPending) return;
+  isLocationPromptPending = false;
+  updateResults();
+}
+
+function dismissLocationPrompt(action = "skipped") {
+  if (action === "skipped" || action === "denied") {
+    localStorage.setItem(LOCATION_STATUS_KEY, action);
+    updateLocationStatusUI(false);
+  }
+  closeLocationModal();
+  finalizePendingLocationFlow();
+}
 
 // Helper function to get source citation
 function getSource(place) {
@@ -505,6 +559,7 @@ function handleLocationError(message) {
 function requestLocationAccess() {
   if (!navigator.geolocation) {
     handleLocationError("Location services are not available in this browser.");
+    dismissLocationPrompt("denied");
     return;
   }
 
@@ -524,6 +579,8 @@ function requestLocationAccess() {
         updateLocationStatusUI(false);
         handleLocationError("Sorry, this service is currently available only within India. Please try again later.");
         setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
+        closeLocationModal();
+        finalizePendingLocationFlow();
         return;
       }
 
@@ -533,20 +590,11 @@ function requestLocationAccess() {
       updateLocationStatusUI(true);
       setRegionRestriction(false);
       closeLocationModal();
-      if (isLocationPromptPending) {
-        isLocationPromptPending = false;
-        updateResults();
-      }
+      finalizePendingLocationFlow();
     },
     () => {
-      localStorage.setItem(LOCATION_STATUS_KEY, "denied");
       handleLocationError("We couldn't access your location. You can enable it anytime in browser settings.");
-      updateLocationStatusUI(false);
-      closeLocationModal();
-      if (isLocationPromptPending) {
-        isLocationPromptPending = false;
-        updateResults();
-      }
+      dismissLocationPrompt("denied");
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
   );
@@ -577,26 +625,23 @@ function initLocationPrompt() {
     allowLocationBtn.addEventListener("click", requestLocationAccess);
   }
   if (skipLocationBtn) {
-    skipLocationBtn.addEventListener("click", () => {
-      localStorage.setItem(LOCATION_STATUS_KEY, "skipped");
-      updateLocationStatusUI(false);
-      closeLocationModal();
-      if (isLocationPromptPending) {
-        isLocationPromptPending = false;
-        updateResults();
-      }
-    });
+    skipLocationBtn.addEventListener("click", () => dismissLocationPrompt("skipped"));
   }
   if (locationModalClose) {
-    locationModalClose.addEventListener("click", closeLocationModal);
+    locationModalClose.addEventListener("click", () => dismissLocationPrompt("skipped"));
   }
   locationModal.addEventListener("click", (e) => {
-    if (e.target === locationModal) closeLocationModal();
+    if (e.target === locationModal) dismissLocationPrompt("skipped");
   });
 
   const savedLocation = localStorage.getItem(LOCATION_KEY);
   if (savedLocation) {
-    userLocation = JSON.parse(savedLocation);
+    try {
+      userLocation = JSON.parse(savedLocation);
+    } catch {
+      userLocation = null;
+      localStorage.removeItem(LOCATION_KEY);
+    }
   }
   updateLocationStatusUI(!!userLocation);
 
@@ -663,6 +708,7 @@ function scrollToSection(element) {
 // INITIALIZATION
 // ============================================
 function init() {
+  clearUnnecessaryCache();
   loadMonths();
   loadTheme();
   setupEventListeners();

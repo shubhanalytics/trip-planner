@@ -51,6 +51,46 @@ body.dark-mode {
   color: var(--text-secondary);
 }
 
+.tips-grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.35rem;
+}
+
+.tip-card {
+  flex: 0 0 calc((100% - 3rem) / 4);
+  min-width: 240px;
+  scroll-snap-align: start;
+}
+
+.tips-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tips-grid::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent-primary) 45%, transparent);
+  border-radius: 999px;
+}
+
+@media (max-width: 900px) {
+  .tip-card {
+    flex: 0 0 74vw;
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tip-card {
+    flex: 0 0 84vw;
+    min-width: 230px;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
