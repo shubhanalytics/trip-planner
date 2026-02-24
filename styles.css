@@ -1492,7 +1492,7 @@ body.dark-mode .btn-favorite:hover {
   font-size: 1.75rem;
 }
 
-.tips-grid {
+.tips-section .tips-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
@@ -1568,12 +1568,13 @@ body.dark-mode .btn-favorite:hover {
     overflow: hidden;
   }
 
-  .tips-grid {
-    display: flex;
+  .tips-section .tips-grid {
+    display: flex !important;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     overflow-x: hidden;
     gap: 0;
+    grid-template-columns: none !important;
   }
 
   .tip-card {
