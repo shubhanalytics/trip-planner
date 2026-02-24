@@ -596,8 +596,8 @@ function initLocationPrompt() {
   }
 
   const status = localStorage.getItem(LOCATION_STATUS_KEY);
-  // Show modal on first visit or if location was never set
-  if (!status || (status !== "allowed" && status !== "skipped")) {
+  // Show modal on first visit or if location was never properly set
+  if (!status || (status !== "allowed" && status !== "skipped" && status !== "denied" && status !== "blocked-region")) {
     // Delay modal slightly to ensure everything is loaded
     setTimeout(() => {
       openLocationModal();
