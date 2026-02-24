@@ -543,6 +543,12 @@ body {
   backdrop-filter: blur(4px);
 }
 
+body:not(.dark-mode) .hero-tag {
+  color: #111c38 !important;
+  background: rgba(79, 70, 229, 0.12) !important;
+  border-color: rgba(79, 70, 229, 0.35) !important;
+}
+
 .quick-start {
   max-width: 1400px;
   margin: 1.75rem auto 0;
@@ -588,6 +594,11 @@ body {
   color: #fff;
   font-weight: 700;
   margin-bottom: 0.5rem;
+}
+
+body:not(.dark-mode) .quick-step-number {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #4f46e5, #ec4899) !important;
 }
 
 .quick-step h3 {
@@ -653,6 +664,12 @@ body {
   color: #fff;
   border-color: transparent;
   box-shadow: var(--shadow-md);
+}
+
+body:not(.dark-mode) .page-tab.active {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #4f46e5, #ec4899) !important;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35) !important;
 }
 
 .filters-section,
@@ -3256,6 +3273,16 @@ body {
   border: 1px solid rgba(188, 209, 255, 0.45);
 }
 
+body:not(.dark-mode) .hero-btn-primary {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .hero-btn-secondary {
+  color: #111c38 !important;
+  background: rgba(102, 102, 255, 0.12) !important;
+  border: 1.5px solid rgba(79, 70, 229, 0.35) !important;
+}
+
 .hero-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(6, 12, 36, 0.35);
@@ -3689,6 +3716,14 @@ body {
 .tips-section h2,
 .favorites-section h2 {
   color: #f3f8ff !important;
+}
+
+body:not(.dark-mode) .section-head h2,
+body:not(.dark-mode) .quick-start h2,
+body:not(.dark-mode) .testimonials h2,
+body:not(.dark-mode) .tips-section h2,
+body:not(.dark-mode) .favorites-section h2 {
+  color: #111c38 !important;
 }
 
 .section-head p,
