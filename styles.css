@@ -1719,15 +1719,17 @@ body.dark-mode .btn-favorite:hover {
   gap: 0.65rem;
   font-size: 0.95rem;
   color: var(--text-secondary);
-  padding: 0.5rem;
+  padding: 0.6rem 0.75rem;
   background: var(--card-bg);
   border-radius: 8px;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .favorite-detail-item:hover {
   background: var(--ux-surface-2);
   transform: translateX(4px);
+  color: var(--text-color);
 }
 
 .favorite-detail-icon {
@@ -2000,6 +2002,7 @@ body.dark-mode .btn-favorite:hover {
   font-size: 1.7rem;
   font-weight: 700;
   color: var(--text-color);
+  letter-spacing: -0.02em;
 }
 
 .dest-detail-rating {
@@ -3277,6 +3280,7 @@ body {
   gap: 0.5rem;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  letter-spacing: -0.01em;
 }
 
 .hero-btn-primary {
