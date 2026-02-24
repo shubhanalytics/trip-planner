@@ -791,8 +791,12 @@ select:focus, input[type="number"]:focus {
   background: var(--card-bg);
   font-weight: 600;
   font-size: 1.1rem;
-  padding: 0.5rem;
+  padding: 0;
   cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 48px;
 }
 
 .filter-actions .btn-apply,
@@ -2549,6 +2553,7 @@ body.dark-mode .btn-favorite:hover {
   .traveler-stepper input[type="number"] {
     width: 70px;
     font-size: 1.1rem;
+    line-height: 48px;
   }
 
   .filter-actions {
