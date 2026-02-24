@@ -184,6 +184,17 @@ const monthNameDisplay = document.getElementById("monthName");
 // Track if filters have been applied
 let hasFiltersApplied = false;
 
+// Pagination & sorting state
+const paginationState = {
+  allDestinations: [],
+  currentPage: 1,
+  itemsPerPage: 12,
+  sortBy: "rating", // rating, temperature, price
+  currentMonth: "",
+  currentRegion: "",
+  currentTravelerCount: 1
+};
+
 // ============================================
 // SOURCE CITATIONS MAPPING
 // ============================================
@@ -1332,6 +1343,168 @@ function updateResults() {
 // ============================================
 // DISPLAY FUNCTIONS
 // ============================================
+
+// Sort destinations by specified criteria
+function sortDestinations(destinations, sortBy) {
+  const sorted = [...destinations];
+  
+  switch(sortBy) {
+    case "rating":
+      sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      break;
+    case "temperature":
+      sorted.sort((a, b) => {
+        const tempA = parseTempRange(a.temperature).max;
+        const tempB = parseTempRange(b.temperature).max;
+        return tempB - tempA;
+      });
+      break;
+    case "price":
+      sorted.sort((a, b) => {
+        const priceA = parseExpenseRange(a.expense).min;
+        const priceB = parseExpenseRange(b.expense).min;
+        return priceA - priceB;
+      });
+      break;
+    default:
+      sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  }
+  
+  return sorted;
+}
+
+// Get paginated destinations
+function getPaginatedDestinations(allDestinations, page, itemsPerPage) {
+  const start = (page - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return allDestinations.slice(start, end);
+}
+
+// Render destination cards with pagination controls
+function renderDestinationCards(destinations, startIndex) {
+  return destinations
+    .map((dest, idx) => `
+      <div class="destination-card-wrapper" style="animation: slideUp 0.5s ease-out ${(idx % 12) * 0.08}s both;">
+        ${createDestinationCard(dest, paginationState.currentTravelerCount)}
+      </div>
+    `)
+    .join("");
+}
+
+// Load more destinations
+function handleLoadMore() {
+  paginationState.currentPage++;
+  const paginatedDests = getPaginatedDestinations(
+    paginationState.allDestinations,
+    paginationState.currentPage,
+    paginationState.itemsPerPage
+  );
+  
+  const grid = results.querySelector(".destinations-grid");
+  if (grid) {
+    grid.innerHTML += renderDestinationCards(paginatedDests, (paginationState.currentPage - 1) * paginationState.itemsPerPage);
+    
+    // Update pagination info and Load More button
+    updatePaginationUI();
+    
+    // Add event listeners to new cards
+    attachCardEventListeners();
+  }
+}
+
+// Update sorting
+function handleSortChange(sortBy) {
+  paginationState.sortBy = sortBy;
+  paginationState.currentPage = 1;
+  paginationState.allDestinations = sortDestinations(paginationState.allDestinations, sortBy);
+  
+  // Re-render with new sort
+  redisplayDestinations();
+}
+
+// Redisplay with current sort/page
+function redisplayDestinations() {
+  const paginatedDests = getPaginatedDestinations(
+    paginationState.allDestinations,
+    paginationState.currentPage,
+    paginationState.itemsPerPage
+  );
+  
+  const regionLabel = paginationState.currentRegion === "india" ? "🇮🇳 India" : "🌐 International";
+  const heading = `<h2 style="text-align: center; margin-bottom: 1rem;">✨ Best-fit destination intelligence for ${paginationState.currentMonth} (${regionLabel})</h2>`;
+  
+  const sortingHtml = `
+    <div class="pagination-controls">
+      <div class="sort-container">
+        <label for="sortSelect">Sort by:</label>
+        <select id="sortSelect">
+          <option value="rating">⭐ Rating (Best First)</option>
+          <option value="temperature">🌡️ Temperature (Warmest)</option>
+          <option value="price">💰 Price (Budget-Friendly)</option>
+        </select>
+      </div>
+      <div class="pagination-info" id="paginationInfo"></div>
+    </div>
+  `;
+  
+  const cardsHtml = renderDestinationCards(paginatedDests, (paginationState.currentPage - 1) * paginationState.itemsPerPage);
+  
+  results.innerHTML = `${heading}${sortingHtml}<div class="destinations-grid">${cardsHtml}</div>`;
+  
+  updatePaginationUI();
+  attachCardEventListeners();
+  attachSortListener();
+}
+
+// Update pagination info and Load More button
+function updatePaginationUI() {
+  const totalItems = paginationState.allDestinations.length;
+  const currentShowing = Math.min(paginationState.currentPage * paginationState.itemsPerPage, totalItems);
+  const paginationInfo = document.getElementById("paginationInfo");
+  
+  if (paginationInfo) {
+    const hasMore = currentShowing < totalItems;
+    paginationInfo.innerHTML = `
+      <div class="pagination-info-text">Showing ${currentShowing} of ${totalItems} destinations</div>
+      ${hasMore ? `<button id="loadMoreBtn" class="btn-load-more">Load More (${totalItems - currentShowing} remaining)</button>` : '<div style="color: var(--text-secondary); font-size: 0.9rem;">All results shown</div>'}
+    `;
+    
+    if (hasMore) {
+      document.getElementById("loadMoreBtn").addEventListener("click", handleLoadMore);
+    }
+  }
+}
+
+// Attach event listeners to cards
+function attachCardEventListeners() {
+  document.querySelectorAll(".btn-favorite").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite(btn.dataset.place, btn);
+    });
+  });
+  
+  document.querySelectorAll(".btn-view-details").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const place = btn.dataset.place;
+      const dest = paginationState.allDestinations.find(d => d.place === place);
+      showModal(dest);
+    });
+  });
+}
+
+// Attach sort dropdown listener
+function attachSortListener() {
+  const sortSelect = document.getElementById("sortSelect");
+  if (sortSelect) {
+    sortSelect.value = paginationState.sortBy;
+    sortSelect.addEventListener("change", (e) => {
+      handleSortChange(e.target.value);
+    });
+  }
+}
+
 function displayPlaceholder() {
   results.innerHTML = `
     <div class="placeholder-state">
@@ -1404,38 +1577,20 @@ function displayDestinations(destinations, month, region, travelerCount, notice 
     return;
   }
   
-  const regionLabel = region === "india" ? "🇮🇳 India" : "🌐 International";
-  const heading = `<h2 style="text-align: center; margin-bottom: 2rem;">✨ Best-fit destination intelligence for ${month} (${regionLabel})</h2>`;
-  const noticeHtml = notice ? `<div class="results-notice">${notice}</div>` : "";
+  // Enrich destinations with region
   const enrichedDestinations = destinations.map(dest => ({ ...dest, region }));
   
-  const cards = enrichedDestinations
-    .map((dest, index) => `
-      <div class="destination-card-wrapper" style="animation: slideUp 0.5s ease-out ${index * 0.08}s both;">
-        ${createDestinationCard(dest, travelerCount)}
-      </div>
-    `)
-    .join("");
+  // Initialize pagination state
+  paginationState.allDestinations = sortDestinations(enrichedDestinations, "rating");
+  paginationState.currentPage = 1;
+  paginationState.sortBy = "rating";
+  paginationState.currentMonth = month;
+  paginationState.currentRegion = region;
+  paginationState.currentTravelerCount = travelerCount;
   
-  results.innerHTML = `${heading}${noticeHtml}<div class="destinations-grid">${cards}</div>`;
+  // Display results
+  redisplayDestinations();
   scrollToResults();
-  
-  // Event listeners
-  document.querySelectorAll(".btn-favorite").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      toggleFavorite(btn.dataset.place, btn);
-    });
-  });
-  
-  document.querySelectorAll(".btn-view-details").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const place = btn.dataset.place;
-      const dest = destinations.find(d => d.place === place);
-      showModal(dest);
-    });
-  });
 }
 
 function createDestinationCard(dest, travelerCount) {

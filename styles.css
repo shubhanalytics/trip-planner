@@ -1039,6 +1039,84 @@ select:focus, input[type="number"]:focus {
   margin-top: 1.5rem;
 }
 
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--ux-surface-2) 60%, transparent);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sort-container label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.sort-container select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--ux-surface);
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-container select:hover {
+  border-color: var(--accent-primary);
+}
+
+.sort-container select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(102, 217, 255, 0.2);
+}
+
+.pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination-info-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.btn-load-more {
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+}
+
+.btn-load-more:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+}
+
+.btn-load-more:active {
+  transform: translateY(0);
+}
+
 .destination-card {
   background: var(--card-bg);
   border: 2px solid var(--border-color);
@@ -4191,6 +4269,39 @@ body:not(.dark-mode) .clear-all-btn:hover {
   background: rgba(239, 68, 68, 0.15) !important;
   border-color: #ef4444 !important;
   color: #ef4444 !important;
+}
+
+body:not(.dark-mode) .pagination-controls {
+  background: rgba(79, 70, 229, 0.08) !important;
+  border: 1px solid rgba(79, 70, 229, 0.2) !important;
+}
+
+body:not(.dark-mode) .sort-container label,
+body:not(.dark-mode) .pagination-info-text {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .sort-container select {
+  background: #ffffff !important;
+  color: #111c38 !important;
+  border-color: #d6e2ff !important;
+}
+
+body:not(.dark-mode) .sort-container select:hover {
+  border-color: #4f46e5 !important;
+}
+
+body:not(.dark-mode) .sort-container select:focus {
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2) !important;
+}
+
+body:not(.dark-mode) .btn-load-more {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+}
+
+body:not(.dark-mode) .btn-load-more:hover {
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4) !important;
 }
 
 body:not(.dark-mode) .favorites-empty {
