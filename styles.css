@@ -1566,6 +1566,65 @@ body.dark-mode .btn-favorite:hover {
   opacity: 0.95;
 }
 
+/* Carousel Styles */
+.carousel-container {
+  position: relative;
+  width: 100%;
+}
+
+.carousel-dots {
+  display: none;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+  background: rgba(255, 255, 255, 0.9);
+  width: 28px;
+  border-radius: 5px;
+}
+
+.carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Mobile Carousel (max-width: 768px) */
+@media (max-width: 768px) {
+  .carousel-container {
+    overflow: hidden;
+  }
+
+  .tips-grid {
+    display: flex;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    gap: 0;
+  }
+
+  .tip-card {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    margin: 0 !important;
+  }
+
+  .carousel-dots {
+    display: flex;
+  }
+}
+
 /* Favorites Page */
 .favorites-page {
   padding: var(--ux-section-gap) 0 4rem;
@@ -3828,6 +3887,18 @@ body:not(.dark-mode) .tip-card:hover {
 
 body:not(.dark-mode) .tip-card p {
   color: #475569 !important;
+}
+
+body:not(.dark-mode) .carousel-dot {
+  background: rgba(79, 70, 229, 0.3) !important;
+}
+
+body:not(.dark-mode) .carousel-dot.active {
+  background: rgba(79, 70, 229, 0.8) !important;
+}
+
+body:not(.dark-mode) .carousel-dot:hover {
+  background: rgba(79, 70, 229, 0.5) !important;
 }
 
 .section-head p,

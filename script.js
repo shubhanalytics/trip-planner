@@ -755,6 +755,7 @@ function initUXEnhancements() {
   initQuickPresets();
   initBackToTop();
   initSmartAnchors();
+  initCarousel();
 }
 
 function syncStickyOffset() {
@@ -859,6 +860,82 @@ function initQuickPresets() {
 function clearPresetSelection() {
   if (!presetChips.length) return;
   presetChips.forEach((chip) => chip.classList.remove("active"));
+}
+
+// Carousel for Travel IQ Essentials on mobile
+let carouselInterval;
+
+function initCarousel() {
+  const carousel = document.getElementById("tipsCarousel");
+  const dotsContainer = document.getElementById("carouselDots");
+  
+  if (!carousel || !dotsContainer) return;
+  
+  const cards = carousel.querySelectorAll(".tip-card");
+  let currentIndex = 0;
+  
+  // Generate dots
+  cards.forEach((_, index) => {
+    const dot = document.createElement("button");
+    dot.className = `carousel-dot ${index === 0 ? "active" : ""}`;
+    dot.setAttribute("aria-label", `Go to slide ${index + 1}`);
+    dot.addEventListener("click", () => goToSlide(index));
+    dotsContainer.appendChild(dot);
+  });
+  
+  function goToSlide(index) {
+    currentIndex = index;
+    updateCarousel();
+    resetAutoCarousel();
+  }
+  
+  function updateCarousel() {
+    // Only apply on mobile (max-width: 768px)
+    if (window.innerWidth > 768) return;
+    
+    const scrollAmount = currentIndex * carousel.offsetWidth;
+    carousel.scrollTo({ left: scrollAmount, behavior: "smooth" });
+    
+    // Update dots
+    document.querySelectorAll(".carousel-dot").forEach((dot, idx) => {
+      dot.classList.toggle("active", idx === currentIndex);
+    });
+  }
+  
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % cards.length;
+    updateCarousel();
+  }
+  
+  function resetAutoCarousel() {
+    clearInterval(carouselInterval);
+    startAutoCarousel();
+  }
+  
+  function startAutoCarousel() {
+    // Only auto-rotate on mobile
+    if (window.innerWidth <= 768) {
+      carouselInterval = setInterval(nextSlide, 4000); // Rotate every 4 seconds
+    }
+  }
+  
+  // Pause on hover
+  carousel.addEventListener("mouseenter", () => clearInterval(carouselInterval));
+  carousel.addEventListener("mouseleave", startAutoCarousel);
+  
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    updateCarousel();
+    const isNowMobile = window.innerWidth <= 768;
+    if (isNowMobile && !carouselInterval) {
+      startAutoCarousel();
+    } else if (!isNowMobile) {
+      clearInterval(carouselInterval);
+    }
+  });
+  
+  // Start auto rotation on mobile
+  startAutoCarousel();
 }
 
 function initBackToTop() {
