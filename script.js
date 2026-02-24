@@ -666,9 +666,10 @@ function handleGenerateSmartPicks() {
   }
 
   const locationStatus = localStorage.getItem(LOCATION_STATUS_KEY);
-  const shouldAskLocation = !userLocation && !locationStatus;
+  // Ask for location unless already allowed or blocked by region
+  const shouldAskLocation = locationStatus !== "allowed" && locationStatus !== "blocked-region";
 
-  if (shouldAskLocation) {
+  if (shouldAskLocation && !userLocation) {
     isLocationPromptPending = true;
     openLocationModal();
     return;
