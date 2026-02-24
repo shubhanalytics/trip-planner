@@ -3726,6 +3726,26 @@ body:not(.dark-mode) .favorites-section h2 {
   color: #111c38 !important;
 }
 
+body:not(.dark-mode) .tips-section {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(168, 85, 247, 0.08)) !important;
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .tip-card {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1.5px solid rgba(79, 70, 229, 0.2) !important;
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .tip-card:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(79, 70, 229, 0.35) !important;
+}
+
+body:not(.dark-mode) .tip-card p {
+  color: #475569 !important;
+}
+
 .section-head p,
 .quick-step p,
 .testimonial-text,
