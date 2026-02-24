@@ -60,6 +60,8 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 /* Mobile App-like Global Styles */
@@ -422,7 +424,8 @@ body {
   margin: 0 auto;
   padding: 2rem 1.5rem;
   position: relative;
-  overflow: visible;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 /* Hero Section */
@@ -1913,7 +1916,7 @@ body.dark-mode .btn-favorite:hover {
   letter-spacing: 0;
   padding: 0.62rem 0.9rem;
   display: inline-block;
-  max-width: 100%;
+  max-width: calc(100vw - 2rem);
   border-radius: 10px;
   background: rgba(102, 217, 255, 0.12);
   border: 1px solid rgba(102, 217, 255, 0.2);
@@ -3910,6 +3913,13 @@ body:not(.dark-mode) .carousel-dot:hover {
 }
 
 @media (max-width: 640px) {
+  .header,
+  .header-content,
+  .header-trust {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   .page-tabs {
     padding: 0.5rem !important;
     margin-left: 0 !important;
@@ -3932,6 +3942,19 @@ body:not(.dark-mode) .carousel-dot:hover {
     min-width: 0 !important;
     max-width: none;
     width: 100% !important;
+  }
+
+  .trust-actions {
+    min-width: 0;
+    max-width: 56vw;
+  }
+
+  .trust-status {
+    min-width: 0;
+    max-width: 44vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .container > .hero,
