@@ -3847,118 +3847,159 @@ input:focus-visible {
 }
 
 /* ============================================
-   LIGHT MODE TEXT VISIBILITY FIXES
+   LIGHT MODE TEXT VISIBILITY FIXES - COMPREHENSIVE
    ============================================ */
 
-body:not(.dark-mode) {
-  /* Page tabs text color */
-  .page-tab {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .section-head h2 {
+  color: #111c38 !important;
+}
 
-  /* Section headings */
-  .section-head h2,
-  .quick-start h2,
-  .testimonials h2,
-  .tips-section h2,
-  .favorites-section h2 {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .section-head p {
+  color: #2f3f5c !important;
+}
 
-  /* Hero section text */
-  .hero-eyebrow {
-    color: var(--ux-muted) !important;
-  }
+body:not(.dark-mode) .page-tab {
+  color: #111c38 !important;
+}
 
-  .hero-subtitle {
-    color: var(--ux-muted) !important;
-  }
+body:not(.dark-mode) .page-tab.active {
+  color: #111c38 !important;
+}
 
-  .hero-tag {
-    background: rgba(79, 70, 229, 0.08) !important;
-    border: 1px solid rgba(79, 70, 229, 0.25) !important;
-    color: #2f3f5c !important;
-  }
+body:not(.dark-mode) .hero-eyebrow {
+  color: #2f3f5c !important;
+}
 
-  /* Data notice */
-  .data-notice {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .hero-subtitle {
+  color: #2f3f5c !important;
+}
 
-  .data-notice p {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .hero-tag {
+  background: rgba(79, 70, 229, 0.08) !important;
+  border: 1px solid rgba(79, 70, 229, 0.25) !important;
+  color: #2f3f5c !important;
+}
 
-  /* Stats section */
-  .stat-label {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .data-notice {
+  color: #111c38 !important;
+}
 
-  /* Placeholder state */
-  .placeholder-state h3,
-  .placeholder-state p,
-  .results-notice {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .data-notice p,
+body:not(.dark-mode) .data-notice strong {
+  color: #111c38 !important;
+}
 
-  /* Destination cards */
-  .destination-card h3,
-  .info-label,
-  .info-value,
-  .destination-card p {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .stat-label {
+  color: #111c38 !important;
+}
 
-  /* Vibe tags */
-  .vibe-tag {
-    background: rgba(79, 70, 229, 0.1) !important;
-    border: 1px solid rgba(79, 70, 229, 0.3) !important;
-    color: #2f3f5c !important;
-  }
+body:not(.dark-mode) .placeholder-state h3,
+body:not(.dark-mode) .placeholder-state p,
+body:not(.dark-mode) .results-notice {
+  color: #111c38 !important;
+}
 
-  /* Buttons text */
-  .btn-favorite,
-  .btn-view-details {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .quick-step p {
+  color: #2f3f5c !important;
+}
 
-  /* Testimonials and tips */
-  .testimonial-text,
-  .testimonial-author,
-  .tip-card h3,
-  .tip-card p,
-  .platform-card h4,
-  .platform-card p,
-  .favorites-section h2,
-  .tips-section h2,
-  .testimonials h2 {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .destination-card h3,
+body:not(.dark-mode) .info-label,
+body:not(.dark-mode) .info-value,
+body:not(.dark-mode) .destination-card p {
+  color: #111c38 !important;
+}
 
-  /* Modal content */
-  .modal-content h2,
-  .modal-content h3,
-  .modal-content p,
-  .modal-content td {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .vibe-tag {
+  background: rgba(79, 70, 229, 0.1) !important;
+  border: 1px solid rgba(79, 70, 229, 0.3) !important;
+  color: #2f3f5c !important;
+}
 
-  /* Footer */
-  .footer {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .btn-favorite,
+body:not(.dark-mode) .btn-view-details {
+  color: #111c38 !important;
+}
 
-  /* Section paragraphs */
-  .section-head p,
-  .quick-step p,
-  .testimonial-text,
-  .data-notice p,
-  .placeholder-state p {
-    color: var(--ux-muted) !important;
-  }
+body:not(.dark-mode) .btn-reset {
+  color: #111c38 !important;
+}
 
-  /* Reset button text */
-  .btn-reset {
-    color: var(--ux-text) !important;
-  }
+body:not(.dark-mode) .preset-chip {
+  background: rgba(79, 70, 229, 0.08) !important;
+  border: 1px solid rgba(79, 70, 229, 0.25) !important;
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .testimonial-text,
+body:not(.dark-mode) .testimonial-author,
+body:not(.dark-mode) .tip-card h3,
+body:not(.dark-mode) .tip-card p {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .tips-section h2,
+body:not(.dark-mode) .favorites-section h2,
+body:not(.dark-mode) .testimonials h2,
+body:not(.dark-mode) .quick-start h2 {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .modal-content h2,
+body:not(.dark-mode) .modal-content h3,
+body:not(.dark-mode) .modal-content p,
+body:not(.dark-mode) .modal-content td {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .footer {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .footer p {
+  color: #2f3f5c !important;
+}
+
+body:not(.dark-mode) .platform-card h4,
+body:not(.dark-mode) .platform-card p {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .trust-title,
+body:not(.dark-mode) .trust-subtitle,
+body:not(.dark-mode) .trust-status {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) .location-description,
+body:not(.dark-mode) .benefit-text,
+body:not(.dark-mode) .location-disclaimer {
+  color: #2f3f5c !important;
+}
+
+/* Override all remaining hardcoded colors from base styles */
+body:not(.dark-mode) a {
+  color: #4f46e5;
+}
+
+body:not(.dark-mode) label,
+body:not(.dark-mode) .tip-card p {
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) input,
+body:not(.dark-mode) select,
+body:not(.dark-mode) textarea {
+  color: #111c38 !important;
+  background: #ffffff !important;
+}
+
+body:not(.dark-mode) select option {
+  background: #ffffff !important;
+  color: #111c38 !important;
+}
+
+body:not(.dark-mode) button,
+body:not(.dark-mode) a.btn {
+  color: #111c38 !important;
 }
