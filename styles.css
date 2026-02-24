@@ -608,7 +608,7 @@ body {
   line-height: 1.45;
 }
 
-.section-tabs {
+.page-tabs {
   position: relative;
   top: auto;
   left: auto;
@@ -626,7 +626,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.section-tab {
+.page-tab {
   border: 1px solid var(--border-color);
   background: var(--card-bg);
   color: var(--text-primary);
@@ -639,12 +639,12 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-.section-tab:hover {
+.page-tab:hover {
   border-color: var(--accent-primary);
   transform: translateY(-1px);
 }
 
-.section-tab.active {
+.page-tab.active {
   background: var(--bg-gradient);
   color: #fff;
   border-color: transparent;
@@ -658,7 +658,7 @@ body {
   scroll-margin-top: calc(var(--sticky-offset, 96px) + 12px);
 }
 
-.section-tabs + .filters-section {
+.page-tabs + .filters-section {
   margin-top: 0;
 }
 
@@ -2131,7 +2131,7 @@ body.dark-mode .btn-favorite:hover {
 }
 
 @media (max-width: 640px) {
-  .section-tabs {
+  .page-tabs {
     justify-content: flex-start;
     overflow-x: auto;
     flex-wrap: nowrap;
@@ -2141,11 +2141,11 @@ body.dark-mode .btn-favorite:hover {
     top: auto;
   }
 
-  .section-tabs::-webkit-scrollbar {
+  .page-tabs::-webkit-scrollbar {
     display: none;
   }
 
-  .section-tab {
+  .page-tab {
     white-space: nowrap;
   }
 
@@ -2291,23 +2291,23 @@ body {
   padding-top: 1.7rem !important;
 }
 
-.section-tabs {
+.page-tabs {
   background: rgba(18, 32, 82, 0.88) !important;
   border-bottom: 1px solid rgba(133, 163, 255, 0.3) !important;
   box-shadow: 0 8px 24px rgba(2, 8, 25, 0.35) !important;
 }
 
-.section-tab {
+.page-tab {
   background: rgba(21, 36, 85, 0.72) !important;
   border: 1px solid rgba(135, 157, 250, 0.35) !important;
   color: #dde8ff !important;
 }
 
-.section-tab:hover {
+.page-tab:hover {
   border-color: rgba(102, 217, 255, 0.55) !important;
 }
 
-.section-tab.active {
+.page-tab.active {
   background: linear-gradient(135deg, #66d9ff, #ff4fd8) !important;
   color: #091331 !important;
   border-color: transparent !important;
@@ -2395,7 +2395,7 @@ body {
   font-size: 0.95rem;
 }
 
-.section-tabs {
+.page-tabs {
   background: rgba(15, 24, 56, 0.72);
   border: 1px solid var(--ux-border);
   border-radius: 16px;
@@ -2405,17 +2405,17 @@ body {
   box-shadow: var(--ux-shadow);
 }
 
-.section-tab {
+.page-tab {
   border-radius: 10px !important;
   background: transparent !important;
   color: #d9e7ff !important;
 }
 
-.section-tab:hover {
+.page-tab:hover {
   background: rgba(102, 217, 255, 0.12) !important;
 }
 
-.section-tab.active {
+.page-tab.active {
   background: linear-gradient(135deg, #66d9ff, #ff4fd8) !important;
   color: #091331 !important;
 }

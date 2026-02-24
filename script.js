@@ -170,7 +170,7 @@ const favoritesSection = document.getElementById("favoritesSection");
 const favoritesList = document.getElementById("favoritesList");
 const dateDisplay = document.getElementById("dateDisplay");
 const timeDisplay = document.getElementById("timeDisplay");
-const sectionTabs = document.querySelectorAll(".section-tab");
+const pageTabs = document.querySelectorAll(".page-tab");
 const presetChips = document.querySelectorAll(".preset-chip");
 const backToTopBtn = document.getElementById("backToTop");
 
@@ -623,7 +623,7 @@ function init() {
   loadMonths();
   loadTheme();
   setupEventListeners();
-  initSectionTabs();
+  initPageTabs();
   syncStickyOffset();
   initUXEnhancements();
   initLocationPrompt();
@@ -654,10 +654,10 @@ function syncStickyOffset() {
   window.addEventListener("load", () => requestAnimationFrame(updateOffset));
 }
 
-function initSectionTabs() {
-  if (!sectionTabs.length) return;
+function initPageTabs() {
+  if (!pageTabs.length) return;
 
-  sectionTabs.forEach((tab) => {
+  pageTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const targetId = tab.dataset.target;
       let targetElement = document.getElementById(targetId);
@@ -669,7 +669,7 @@ function initSectionTabs() {
 
       if (!targetElement) return;
 
-      sectionTabs.forEach((item) => item.classList.remove("active"));
+      pageTabs.forEach((item) => item.classList.remove("active"));
       tab.classList.add("active");
       scrollToSection(targetElement);
     });
@@ -682,7 +682,7 @@ function initSectionTabs() {
 
   const applyActiveTab = (activeId) => {
     if (!activeId) return;
-    sectionTabs.forEach((tab) => {
+    pageTabs.forEach((tab) => {
       tab.classList.toggle("active", tab.dataset.target === activeId);
     });
   };
