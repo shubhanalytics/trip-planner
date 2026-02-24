@@ -281,13 +281,36 @@
         <div class="modal-content">
             <button class="modal-close" id="locationModalClose">&times;</button>
             <div class="location-modal-body">
-                <h2>📍 Enable Location for Better Suggestions</h2>
-                <p id="locationMessage">We only use your location to improve travel suggestions and estimate travel cost. No login required and your data stays private.</p>
-                <div class="location-modal-actions">
-                    <button class="btn-apply" id="allowLocation">Allow Location</button>
-                    <button class="btn-reset" id="skipLocation">Not Now</button>
+                <div class="location-modal-header">
+                    <div class="location-icon">📍</div>
+                    <h2>Enable Location for Personalized Insights</h2>
                 </div>
-                <p class="location-disclaimer">You can disable location any time in your browser settings.</p>
+                <p class="location-description" id="locationMessage">Get accurate travel distances and cost estimates from your location to destinations.</p>
+                
+                <div class="location-benefits">
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🚗</span>
+                        <span class="benefit-text">See exact distance by road to each destination</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">💰</span>
+                        <span class="benefit-text">Get travel cost estimates from your city</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🔒</span>
+                        <span class="benefit-text">Your location stays private in your browser</span>
+                    </div>
+                </div>
+                
+                <div class="location-modal-actions">
+                    <button class="btn-apply" id="allowLocation">
+                        <span>✓</span> Allow Location
+                    </button>
+                    <button class="btn-reset" id="skipLocation">
+                        <span>→</span> Not Now
+                    </button>
+                </div>
+                <p class="location-disclaimer">💡 You can change this anytime via the location toggle in the header</p>
             </div>
         </div>
     </div>

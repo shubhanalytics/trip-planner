@@ -468,17 +468,20 @@ function setRegionRestriction(isRestricted, message) {
 
 function openLocationModal() {
   if (locationModal) {
-    locationModal.classList.add("active");
-    // Prevent body scroll on mobile when modal is open
+    // Calculate scrollbar width to prevent layout shift
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+    locationModal.classList.add("active");
   }
 }
 
 function closeLocationModal() {
   if (locationModal) {
     locationModal.classList.remove("active");
-    // Restore body scroll
+    // Restore body scroll and remove padding
     document.body.style.overflow = "";
+    document.body.style.paddingRight = "";
   }
 }
 
@@ -1394,15 +1397,18 @@ function showModal(dest) {
     </p>
   `;
   
-  modal.classList.add("active");
-  // Prevent body scroll on mobile when modal is open
+  // Calculate scrollbar width to prevent layout shift
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
   document.body.style.overflow = "hidden";
+  document.body.style.paddingRight = `${scrollbarWidth}px`;
+  modal.classList.add("active");
 }
 
 function closeModal() {
   modal.classList.remove("active");
-  // Restore body scroll
+  // Restore body scroll and remove padding
   document.body.style.overflow = "";
+  document.body.style.paddingRight = "";
 }
 
 // ============================================
