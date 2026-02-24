@@ -1283,11 +1283,12 @@ body.dark-mode .btn-favorite:hover {
 /* Testimonials */
 .best-places-section {
   background: var(--card-bg);
-  border-radius: 16px;
+  border-radius: 15px;
   padding: 3rem 2rem;
   margin-bottom: 3rem;
   box-shadow: 0 4px 16px var(--shadow-color);
   overflow: visible;
+  border: 1px solid var(--border-color);
 }
 
 .best-places-header {
@@ -1319,15 +1320,17 @@ body.dark-mode .btn-favorite:hover {
   position: relative;
   overflow: hidden;
   border-radius: 12px;
+  background: var(--bg-secondary);
+  padding: 1rem;
 }
 
 .carousel-track {
   display: flex;
-  gap: 1.25rem;
+  gap: 1.5rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  padding: 1rem 0;
+  padding: 0;
   scroll-padding: 1rem;
   scrollbar-width: none;
 }
@@ -1344,55 +1347,83 @@ body.dark-mode .btn-favorite:hover {
 }
 
 .carousel-card {
-  background: var(--ux-surface);
+  background: var(--card-bg);
   border: 2px solid var(--border-color);
-  border-radius: 14px;
-  padding: 1.75rem;
+  border-radius: 15px;
+  padding: 1.5rem;
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  min-height: 280px;
+  min-height: 300px;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-gradient);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 0;
 }
 
 .carousel-card:hover {
   transform: translateY(-8px) translateZ(0);
-  border-color: var(--ux-accent, var(--primary-color));
+  border-color: var(--accent-primary);
   box-shadow: 0 12px 28px var(--shadow-color);
   will-change: transform;
 }
 
+.carousel-card:hover::before {
+  left: 100%;
+}
+
 .carousel-place-name {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--text-primary);
   line-height: 1.3;
-  min-height: 2.6rem;
+  min-height: 2.8rem;
   display: flex;
   align-items: center;
   word-break: break-word;
+  position: relative;
+  z-index: 1;
 }
 
 .carousel-details {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 0.75rem;
-  padding: 1rem;
-  background: var(--ux-surface-2, var(--card-bg));
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  position: relative;
+  z-index: 1;
 }
 
 .carousel-detail-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
   font-size: 0.95rem;
   color: var(--text-secondary);
   font-weight: 500;
+  padding: 0.8rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .carousel-detail-icon {
@@ -1406,15 +1437,17 @@ body.dark-mode .btn-favorite:hover {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .carousel-vibe-tag {
   display: inline-block;
-  background: var(--ux-accent, rgba(102, 126, 234, 0.15));
-  color: var(--ux-accent, var(--primary-color));
-  padding: 0.4rem 0.85rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  background: var(--accent-light);
+  color: var(--accent-primary);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
