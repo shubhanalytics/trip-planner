@@ -1589,6 +1589,25 @@ body.dark-mode .btn-favorite:hover {
   }
 }
 
+/* Desktop/Laptop: always keep Travel IQ in horizontal grid */
+@media (min-width: 769px) {
+  .tips-section .tips-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    gap: 1.5rem !important;
+    overflow: visible !important;
+  }
+
+  .tips-section .tip-card {
+    flex: initial !important;
+    margin: 0 !important;
+  }
+
+  .carousel-dots {
+    display: none !important;
+  }
+}
+
 /* Favorites Page */
 .favorites-page {
   padding: var(--ux-section-gap) 0 4rem;
