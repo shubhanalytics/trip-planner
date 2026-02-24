@@ -331,7 +331,7 @@ function initMusicPlayer() {
   
   // Music tracks
   const tracks = [
-    { name: "Yun Hi Chala Chal", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }
+    { name: "Yun Hi Chala Chal Raahi 🚶", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }
   ];
   
   let currentTrack = 0;

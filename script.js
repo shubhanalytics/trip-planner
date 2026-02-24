@@ -1188,6 +1188,20 @@ function createDestinationCard(dest, travelerCount) {
     return `<span class="vibe-tag">${vibeEmojis[v] || ""} ${v.charAt(0).toUpperCase() + v.slice(1)}</span>`;
   }).join("");
   
+  // Calculate distance from user location
+  let distanceInfo = "";
+  if (userLocation) {
+    const coords = getDestinationCoordinates(dest.place);
+    if (coords) {
+      const distanceKm = Math.round(haversineKm(userLocation, coords));
+      distanceInfo = `
+        <div class="info-item">
+          <span class="info-label">🚗 Distance</span>
+          <span class="info-value">${distanceKm} km</span>
+        </div>`;
+    }
+  }
+  
   return `
     <div class="destination-card" data-place="${dest.place}">
       <div class="destination-card-header">
@@ -1211,7 +1225,7 @@ function createDestinationCard(dest, travelerCount) {
         <div class="info-item">
           <span class="info-label">👥 Total (${travelerCount})</span>
           <span class="info-value">${formatInr(totalMin)} - ${formatInr(totalMax)}</span>
-        </div>
+        </div>${distanceInfo}
         <div class="info-item">
           <span class="info-label">⏱️ Duration</span>
           <span class="info-value">${dest.duration}</span>
@@ -1433,7 +1447,7 @@ function pauseBackgroundMusic() {
 }
 
 if (musicTrackName) {
-  musicTrackName.textContent = "Yun Hi Chala Chal";
+  musicTrackName.textContent = "Yun Hi Chala Chal Raahi 🚶";
 }
 
 if (musicPlayBtn) {

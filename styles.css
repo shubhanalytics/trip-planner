@@ -617,7 +617,7 @@ body {
 }
 
 .quick-step {
-  background: var(--card-bg);
+  background: var(--ux-surface, var(--card-bg));
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 1.2rem;
@@ -1085,6 +1085,9 @@ select:focus, input[type="number"]:focus {
   margin: 0;
   font-size: 1.5rem;
   color: var(--text-primary);
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
 }
 
 .destination-rating {
