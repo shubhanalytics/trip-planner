@@ -2200,9 +2200,57 @@ body.dark-mode .btn-favorite:hover {
   --ux-border: rgba(132, 155, 255, 0.28);
   --ux-accent: #66d9ff;
   --ux-accent-2: #ff4fd8;
+  --ux-accent-gradient: linear-gradient(135deg, #66d9ff, #ff4fd8);
   --ux-shadow: 0 14px 36px rgba(2, 6, 23, 0.45);
   --ux-section-gap: 1.4rem;
   --ux-section-gap-mobile: 1rem;
+  --ux-input-bg: rgba(7, 14, 40, 0.7);
+  --ux-surface-strong: rgba(9, 18, 45, 0.86);
+  --ux-card-text: #e6f0ff;
+  --ux-hero-grad: linear-gradient(130deg, #102157 0%, #2b2f92 38%, #7a2ebc 70%, #0ea5c8 100%);
+}
+
+body:not(.dark-mode):not(.ocean-theme):not(.forest-theme):not(.sunset-theme):not(.aurora-theme) {
+  --ux-bg: radial-gradient(1100px 700px at 15% -15%, rgba(79, 70, 229, 0.12), transparent 60%),
+           radial-gradient(1200px 800px at 90% -20%, rgba(14, 165, 233, 0.10), transparent 58%),
+           linear-gradient(170deg, #f4f7ff 0%, #edf3ff 42%, #e7efff 100%);
+  --ux-surface: rgba(255, 255, 255, 0.88);
+  --ux-surface-2: rgba(248, 251, 255, 0.96);
+  --ux-card: rgba(255, 255, 255, 0.98);
+  --ux-text: #0f172a;
+  --ux-muted: #475569;
+  --ux-border: rgba(99, 102, 241, 0.2);
+  --ux-accent: #4f46e5;
+  --ux-accent-2: #ec4899;
+  --ux-accent-gradient: linear-gradient(135deg, #4f46e5, #ec4899);
+  --ux-input-bg: rgba(255, 255, 255, 0.95);
+  --ux-surface-strong: rgba(241, 245, 255, 0.95);
+  --ux-card-text: #1e293b;
+  --ux-hero-grad: linear-gradient(130deg, #4f46e5 0%, #3b82f6 40%, #a855f7 72%, #06b6d4 100%);
+}
+
+body.ocean-theme {
+  --ux-accent: #0288d1;
+  --ux-accent-2: #00acc1;
+  --ux-accent-gradient: linear-gradient(135deg, #0288d1, #00acc1);
+}
+
+body.forest-theme {
+  --ux-accent: #2e7d32;
+  --ux-accent-2: #66bb6a;
+  --ux-accent-gradient: linear-gradient(135deg, #2e7d32, #66bb6a);
+}
+
+body.sunset-theme {
+  --ux-accent: #ff6f00;
+  --ux-accent-2: #ff8a65;
+  --ux-accent-gradient: linear-gradient(135deg, #ff6f00, #ff8a65);
+}
+
+body.aurora-theme {
+  --ux-accent: #7b1fa2;
+  --ux-accent-2: #29b6f6;
+  --ux-accent-gradient: linear-gradient(135deg, #7b1fa2, #29b6f6);
 }
 
 body {
@@ -2273,13 +2321,13 @@ body {
 .music-player,
 .theme-selector select,
 .trust-status {
-  background: rgba(21, 33, 77, 0.84) !important;
+  background: var(--ux-surface-2) !important;
   border: 1px solid var(--ux-border) !important;
-  color: #e6eeff !important;
+  color: var(--ux-text) !important;
 }
 
 .theme-selector select {
-  color: #eaf2ff !important;
+  color: var(--ux-text) !important;
 }
 
 .header-trust {
@@ -2305,9 +2353,9 @@ body {
 }
 
 .page-tab {
-  background: rgba(21, 36, 85, 0.72) !important;
+  background: var(--ux-surface-2) !important;
   border: 1px solid rgba(135, 157, 250, 0.35) !important;
-  color: #dde8ff !important;
+  color: var(--ux-text) !important;
 }
 
 .page-tab:hover {
@@ -2315,14 +2363,14 @@ body {
 }
 
 .page-tab.active {
-  background: linear-gradient(135deg, #66d9ff, #ff4fd8) !important;
+  background: var(--ux-accent-gradient) !important;
   color: #091331 !important;
   border-color: transparent !important;
 }
 
 .hero {
   border-radius: 28px !important;
-  background: linear-gradient(130deg, #102157 0%, #2b2f92 38%, #7a2ebc 70%, #0ea5c8 100%) !important;
+  background: var(--ux-hero-grad) !important;
   box-shadow: 0 24px 60px rgba(3, 8, 26, 0.58) !important;
   border: 1px solid rgba(170, 193, 255, 0.3);
 }
@@ -2423,7 +2471,7 @@ body {
 }
 
 .page-tab.active {
-  background: linear-gradient(135deg, #66d9ff, #ff4fd8) !important;
+  background: var(--ux-accent-gradient) !important;
   color: #091331 !important;
 }
 
@@ -2508,20 +2556,26 @@ body {
 
 .filter-label {
   font-size: 0.76rem !important;
-  color: #b6c8f5 !important;
+  color: var(--ux-muted) !important;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .filters-section select,
 .filters-section input[type="number"] {
   border-radius: 12px !important;
   border: 1px solid rgba(137, 159, 246, 0.45) !important;
-  background: rgba(7, 14, 40, 0.7) !important;
-  color: #eaf2ff !important;
+  background: var(--ux-input-bg) !important;
+  color: var(--ux-text) !important;
+  text-align: center;
+  text-align-last: center;
 }
 
 .filters-section select option {
-  background: #0f1b45;
-  color: #eaf2ff;
+  background: var(--ux-surface-2);
+  color: var(--ux-text);
 }
 
 .stepper-btn {
@@ -2543,7 +2597,7 @@ body {
 
 .btn-apply {
   color: #061230 !important;
-  background: linear-gradient(135deg, #66d9ff, #ff4fd8) !important;
+  background: var(--ux-accent-gradient) !important;
   border: none !important;
 }
 
@@ -2578,7 +2632,7 @@ body {
 
 .placeholder-state,
 .results-notice {
-  background: rgba(9, 18, 45, 0.86) !important;
+  background: var(--ux-surface-strong) !important;
   border: 1px dashed rgba(136, 160, 250, 0.45) !important;
   border-radius: 16px !important;
 }
@@ -2600,7 +2654,12 @@ body {
 .info-label,
 .info-value,
 .destination-card p {
-  color: #e6f0ff !important;
+  color: var(--ux-card-text) !important;
+}
+
+.destination-card .info-item {
+  background: var(--ux-surface-strong) !important;
+  border: 1px solid var(--ux-border);
 }
 
 .destination-card:hover {
@@ -2616,7 +2675,7 @@ body {
 }
 
 .destination-rating {
-  background: linear-gradient(135deg, #66d9ff, #ff4fd8) !important;
+  background: var(--ux-accent-gradient) !important;
   color: #091331 !important;
 }
 
@@ -2635,7 +2694,7 @@ body {
 
 .btn-favorite.active,
 .btn-view-details:hover {
-  background: linear-gradient(135deg, #66d9ff, #ff4fd8) !important;
+  background: var(--ux-accent-gradient) !important;
   color: #091331 !important;
   border-color: transparent !important;
 }
@@ -2779,7 +2838,7 @@ body {
   .filter-label {
     min-height: 2.4rem;
     line-height: 1.25;
-    align-items: flex-end;
+    align-items: center;
   }
 
   .filters-section select,
