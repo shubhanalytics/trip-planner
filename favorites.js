@@ -5,6 +5,8 @@
 // Constants & DOM Elements
 const FAVORITES_KEY = "wanderhub_favorites";
 const THEME_KEY = "wanderhub_theme";
+const MUSIC_STATE_KEY = "wanderhub_music_state";
+const MUSIC_TRACK_URL = "Yun Hi Chala Chal-raahi.mp3";
 
 const favoritesEmpty = document.getElementById("favoritesEmpty");
 const favoritesGrid = document.getElementById("favoritesGrid");
@@ -13,6 +15,8 @@ const themeToggleBtn = document.getElementById("themeToggle");
 const musicPlayer = document.getElementById("musicPlayer");
 const musicPlay = document.getElementById("musicPlay");
 const musicPause = document.getElementById("musicPause");
+const musicStatus = document.getElementById("musicStatus");
+const musicTrackName = document.getElementById("musicTrackName");
 
 // State
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
@@ -314,39 +318,94 @@ function showDetailsModal(dest) {
 // ============================================
 function initMusicPlayer() {
   if (!musicPlayer) return;
-  
-  // Music tracks
-  const tracks = [
-    { name: "Yun Hi Chala Chal Raahi 🚶", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }
-  ];
-  
-  let currentTrack = 0;
-  audioPlayer = new Audio(tracks[currentTrack].url);
-  
+
+  audioPlayer = new Audio(MUSIC_TRACK_URL);
+  audioPlayer.loop = true;
+  audioPlayer.volume = 0.3;
+
+  const saveMusicState = (isPlaying = !audioPlayer.paused) => {
+    const payload = {
+      isPlaying,
+      currentTime: Number.isFinite(audioPlayer.currentTime) ? audioPlayer.currentTime : 0,
+      updatedAt: Date.now()
+    };
+    localStorage.setItem(MUSIC_STATE_KEY, JSON.stringify(payload));
+  };
+
+  const updateMusicUI = (isPlaying, statusLabel = "") => {
+    musicPlayer.classList.toggle("playing", isPlaying);
+    if (musicPlay) {
+      musicPlay.disabled = isPlaying;
+    }
+    if (musicPause) {
+      musicPause.disabled = !isPlaying;
+    }
+    if (musicStatus) {
+      musicStatus.textContent = statusLabel || (isPlaying ? "Playing" : "Paused");
+    }
+  };
+
+  const playMusic = async () => {
+    try {
+      await audioPlayer.play();
+      updateMusicUI(true, "Playing");
+      saveMusicState(true);
+    } catch {
+      updateMusicUI(false, "Tap Play");
+      saveMusicState(false);
+    }
+  };
+
+  const pauseMusic = () => {
+    audioPlayer.pause();
+    updateMusicUI(false, "Paused");
+    saveMusicState(false);
+  };
+
+  const restoreMusicState = () => {
+    try {
+      const raw = localStorage.getItem(MUSIC_STATE_KEY);
+      if (!raw) return;
+
+      const state = JSON.parse(raw);
+      const time = Number(state?.currentTime);
+      if (Number.isFinite(time) && time >= 0) {
+        audioPlayer.currentTime = time;
+      }
+
+      if (state?.isPlaying) {
+        playMusic();
+      }
+    } catch {
+      // Ignore malformed saved state
+    }
+  };
+
   if (musicTrackName) {
-    musicTrackName.textContent = tracks[currentTrack].name;
+    musicTrackName.textContent = "Yun Hi Chala Chal Raahi 🚶";
   }
-  
+
   if (musicPlay) {
-    musicPlay.addEventListener("click", () => {
-      audioPlayer.play();
-      musicPlayer.classList.add("playing");
-      if (musicStatus) musicStatus.textContent = "Playing";
-    });
+    musicPlay.addEventListener("click", playMusic);
   }
-  
+
   if (musicPause) {
-    musicPause.addEventListener("click", () => {
-      audioPlayer.pause();
-      musicPlayer.classList.remove("playing");
-      if (musicStatus) musicStatus.textContent = "Paused";
-    });
+    musicPause.addEventListener("click", pauseMusic);
   }
-  
+
   audioPlayer.addEventListener("ended", () => {
-    musicPlayer.classList.remove("playing");
-    if (musicStatus) musicStatus.textContent = "Ended";
+    updateMusicUI(false, "Ended");
+    saveMusicState(false);
   });
+
+  audioPlayer.addEventListener("play", () => updateMusicUI(true, "Playing"));
+  audioPlayer.addEventListener("pause", () => updateMusicUI(false, "Paused"));
+  audioPlayer.addEventListener("timeupdate", () => saveMusicState(!audioPlayer.paused));
+  window.addEventListener("pagehide", () => saveMusicState(!audioPlayer.paused));
+  window.addEventListener("beforeunload", () => saveMusicState(!audioPlayer.paused));
+
+  updateMusicUI(false, "Paused");
+  restoreMusicState();
 }
 
 // ============================================

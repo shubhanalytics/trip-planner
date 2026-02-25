@@ -1919,7 +1919,9 @@ const musicPlayBtn = document.getElementById("musicPlay");
 const musicPauseBtn = document.getElementById("musicPause");
 const musicStatus = document.getElementById("musicStatus");
 const musicTrackName = document.getElementById("musicTrackName");
-const backgroundMusic = new Audio("Yun Hi Chala Chal-raahi.mp3");
+const MUSIC_STATE_KEY = "wanderhub_music_state";
+const MUSIC_TRACK_URL = "Yun Hi Chala Chal-raahi.mp3";
+const backgroundMusic = new Audio(MUSIC_TRACK_URL);
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.3;
 
@@ -1938,18 +1940,49 @@ function updateMusicUI(isPlaying, statusLabel = "") {
   }
 }
 
+function saveMusicState(isPlaying = !backgroundMusic.paused) {
+  const payload = {
+    isPlaying,
+    currentTime: Number.isFinite(backgroundMusic.currentTime) ? backgroundMusic.currentTime : 0,
+    updatedAt: Date.now()
+  };
+  localStorage.setItem(MUSIC_STATE_KEY, JSON.stringify(payload));
+}
+
+function restoreMusicState() {
+  try {
+    const raw = localStorage.getItem(MUSIC_STATE_KEY);
+    if (!raw) return;
+
+    const state = JSON.parse(raw);
+    const time = Number(state?.currentTime);
+    if (Number.isFinite(time) && time >= 0) {
+      backgroundMusic.currentTime = time;
+    }
+
+    if (state?.isPlaying) {
+      playBackgroundMusic();
+    }
+  } catch {
+    // Ignore malformed saved state
+  }
+}
+
 async function playBackgroundMusic() {
   try {
     await backgroundMusic.play();
     updateMusicUI(true, "Playing");
+    saveMusicState(true);
   } catch {
     updateMusicUI(false, "Tap Play");
+    saveMusicState(false);
   }
 }
 
 function pauseBackgroundMusic() {
   backgroundMusic.pause();
   updateMusicUI(false, "Paused");
+  saveMusicState(false);
 }
 
 if (musicTrackName) {
@@ -1966,9 +1999,13 @@ if (musicPauseBtn) {
 
 backgroundMusic.addEventListener("play", () => updateMusicUI(true, "Playing"));
 backgroundMusic.addEventListener("pause", () => updateMusicUI(false, "Paused"));
+backgroundMusic.addEventListener("timeupdate", () => saveMusicState(!backgroundMusic.paused));
+window.addEventListener("pagehide", () => saveMusicState(!backgroundMusic.paused));
+window.addEventListener("beforeunload", () => saveMusicState(!backgroundMusic.paused));
 backgroundMusic.addEventListener("error", () => updateMusicUI(false, "Unavailable"));
 
 updateMusicUI(false, "Paused");
+restoreMusicState();
 
 // ============================================
 // START APPLICATION
