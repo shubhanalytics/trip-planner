@@ -2031,9 +2031,15 @@ const musicStatus = document.getElementById("musicStatus");
 const musicTrackName = document.getElementById("musicTrackName");
 const MUSIC_STATE_KEY = "wanderhub_music_state";
 const MUSIC_TRACK_URL = "Yun Hi Chala Chal-raahi.mp3";
-const backgroundMusic = new Audio(MUSIC_TRACK_URL);
-backgroundMusic.loop = true;
-backgroundMusic.volume = 0.3;
+let backgroundMusic;
+if (window.__wanderhubAudioPlayer) {
+  backgroundMusic = window.__wanderhubAudioPlayer;
+} else {
+  backgroundMusic = new Audio(MUSIC_TRACK_URL);
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.3;
+  window.__wanderhubAudioPlayer = backgroundMusic;
+}
 
 function updateMusicUI(isPlaying, statusLabel = "") {
   if (musicPlayer) {
@@ -2048,6 +2054,7 @@ function updateMusicUI(isPlaying, statusLabel = "") {
   if (musicStatus) {
     musicStatus.textContent = statusLabel || (isPlaying ? "Playing" : "Paused");
   }
+  window.__wanderhubMusicUIState = { isPlaying, statusLabel };
 }
 
 function saveMusicState(isPlaying = !backgroundMusic.paused) {
@@ -2057,19 +2064,22 @@ function saveMusicState(isPlaying = !backgroundMusic.paused) {
     updatedAt: Date.now()
   };
   localStorage.setItem(MUSIC_STATE_KEY, JSON.stringify(payload));
+  window.__wanderhubMusicState = payload;
 }
 
 function restoreMusicState() {
   try {
-    const raw = localStorage.getItem(MUSIC_STATE_KEY);
-    if (!raw) return;
-
-    const state = JSON.parse(raw);
+    // Prefer global state if available
+    let state = window.__wanderhubMusicState;
+    if (!state) {
+      const raw = localStorage.getItem(MUSIC_STATE_KEY);
+      if (!raw) return;
+      state = JSON.parse(raw);
+    }
     const time = Number(state?.currentTime);
     if (Number.isFinite(time) && time >= 0) {
       backgroundMusic.currentTime = time;
     }
-
     if (state?.isPlaying) {
       playBackgroundMusic();
     }
@@ -2083,9 +2093,11 @@ async function playBackgroundMusic() {
     await backgroundMusic.play();
     updateMusicUI(true, "Playing");
     saveMusicState(true);
+    window.__wanderhubMusicPlaying = true;
   } catch {
     updateMusicUI(false, "Tap Play");
     saveMusicState(false);
+    window.__wanderhubMusicPlaying = false;
   }
 }
 
@@ -2093,6 +2105,7 @@ function pauseBackgroundMusic() {
   backgroundMusic.pause();
   updateMusicUI(false, "Paused");
   saveMusicState(false);
+  window.__wanderhubMusicPlaying = false;
 }
 
 if (musicTrackName) {
@@ -2107,14 +2120,25 @@ if (musicPauseBtn) {
   musicPauseBtn.addEventListener("click", pauseBackgroundMusic);
 }
 
-backgroundMusic.addEventListener("play", () => updateMusicUI(true, "Playing"));
-backgroundMusic.addEventListener("pause", () => updateMusicUI(false, "Paused"));
+backgroundMusic.addEventListener("play", () => {
+  updateMusicUI(true, "Playing");
+  window.__wanderhubMusicPlaying = true;
+});
+backgroundMusic.addEventListener("pause", () => {
+  updateMusicUI(false, "Paused");
+  window.__wanderhubMusicPlaying = false;
+});
 backgroundMusic.addEventListener("timeupdate", () => saveMusicState(!backgroundMusic.paused));
 window.addEventListener("pagehide", () => saveMusicState(!backgroundMusic.paused));
 window.addEventListener("beforeunload", () => saveMusicState(!backgroundMusic.paused));
 backgroundMusic.addEventListener("error", () => updateMusicUI(false, "Unavailable"));
 
-updateMusicUI(false, "Paused");
+// Restore UI state if available
+if (window.__wanderhubMusicUIState) {
+  updateMusicUI(window.__wanderhubMusicUIState.isPlaying, window.__wanderhubMusicUIState.statusLabel);
+} else {
+  updateMusicUI(false, "Paused");
+}
 restoreMusicState();
 
 // ============================================
