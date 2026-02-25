@@ -405,6 +405,7 @@ function finalizePendingLocationFlow() {
   if (!isLocationPromptPending) return;
   isLocationPromptPending = false;
   updateResults();
+  scrollToResults();
 }
 
 function dismissLocationPrompt(action = "skipped") {
@@ -695,9 +696,18 @@ function handleGenerateSmartPicks() {
 // Auto-scroll to results section
 function scrollToResults() {
   const resultsSection = document.getElementById("results");
-  setTimeout(() => {
-    scrollToSection(resultsSection);
-  }, 300);
+  if (!resultsSection) return;
+
+  const performScroll = () => {
+    const offset = getStickyOffset() + 10;
+    const targetY = window.scrollY + resultsSection.getBoundingClientRect().top - offset;
+    window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
+  };
+
+  requestAnimationFrame(() => {
+    performScroll();
+    setTimeout(performScroll, 220);
+  });
 }
 
 function getStickyOffset() {
