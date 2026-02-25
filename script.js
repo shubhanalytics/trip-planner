@@ -358,7 +358,7 @@ const THEME_KEY = "wanderhub_theme";
 const LOCATION_KEY = "wanderhub_location";
 const LOCATION_STATUS_KEY = "wanderhub_location_status";
 const CACHE_VERSION_KEY = "wanderhub_cache_version";
-const CURRENT_CACHE_VERSION = "2026-02-24";
+const CURRENT_CACHE_VERSION = "2026-02-25";
 let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
 let userLocation = null;
 let isRegionRestricted = false;
@@ -367,6 +367,23 @@ let isPageTabDelegatedHandlerBound = false;
 let isHeroQuickStartHandlerBound = false;
 
 function clearUnnecessaryCache() {
+  const allowedAppKeys = new Set([
+    FAVORITES_KEY,
+    THEME_KEY,
+    LOCATION_KEY,
+    LOCATION_STATUS_KEY,
+    CACHE_VERSION_KEY,
+    "wanderhub_music_state"
+  ]);
+
+  for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+    const key = localStorage.key(index);
+    if (!key || !key.startsWith("wanderhub_")) continue;
+    if (!allowedAppKeys.has(key)) {
+      localStorage.removeItem(key);
+    }
+  }
+
   const cacheVersion = localStorage.getItem(CACHE_VERSION_KEY);
 
   if (cacheVersion !== CURRENT_CACHE_VERSION) {
@@ -378,6 +395,12 @@ function clearUnnecessaryCache() {
   const savedTheme = localStorage.getItem(THEME_KEY);
   if (savedTheme && savedTheme !== "light-mode" && savedTheme !== "dark-mode") {
     localStorage.setItem(THEME_KEY, "light-mode");
+  }
+
+  const savedLocationStatus = localStorage.getItem(LOCATION_STATUS_KEY);
+  const validLocationStatuses = new Set(["allowed", "blocked-region", "skipped", "denied", "cleared"]);
+  if (savedLocationStatus && !validLocationStatuses.has(savedLocationStatus)) {
+    localStorage.removeItem(LOCATION_STATUS_KEY);
   }
 
   const rawLocation = localStorage.getItem(LOCATION_KEY);
@@ -399,6 +422,19 @@ function clearUnnecessaryCache() {
       if (localStorage.getItem(LOCATION_STATUS_KEY) === "allowed") {
         localStorage.removeItem(LOCATION_STATUS_KEY);
       }
+    }
+  }
+
+  const rawMusicState = localStorage.getItem("wanderhub_music_state");
+  if (rawMusicState) {
+    try {
+      const parsedMusicState = JSON.parse(rawMusicState);
+      const hasValidCurrentTime = Number.isFinite(Number(parsedMusicState?.currentTime));
+      if (typeof parsedMusicState?.isPlaying !== "boolean" || !hasValidCurrentTime) {
+        localStorage.removeItem("wanderhub_music_state");
+      }
+    } catch {
+      localStorage.removeItem("wanderhub_music_state");
     }
   }
 }
