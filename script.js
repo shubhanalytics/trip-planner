@@ -672,7 +672,11 @@ function showToast(message, duration = 3000) {
   }, duration);
 }
 
-function handleGenerateSmartPicks() {
+function handleGenerateSmartPicks(event) {
+  if (event) {
+    event.preventDefault();
+  }
+
   scrollToResults();
 
   if (!monthSelect.value) {
@@ -698,16 +702,19 @@ function scrollToResults() {
   const resultsSection = document.getElementById("results");
   if (!resultsSection) return;
 
-  const performScroll = () => {
+  const alignWithStickyOffset = () => {
     const offset = getStickyOffset() + 10;
-    const targetY = window.scrollY + resultsSection.getBoundingClientRect().top - offset;
-    window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
+    const top = resultsSection.getBoundingClientRect().top;
+    if (top < offset - 2 || top > offset + 2) {
+      window.scrollBy({ top: top - offset, behavior: "smooth" });
+    }
   };
 
-  requestAnimationFrame(() => {
-    performScroll();
-    setTimeout(performScroll, 220);
-  });
+  resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  requestAnimationFrame(alignWithStickyOffset);
+  setTimeout(alignWithStickyOffset, 220);
+  setTimeout(alignWithStickyOffset, 500);
 }
 
 function getStickyOffset() {
