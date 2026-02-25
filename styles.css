@@ -361,6 +361,8 @@ body {
   position: relative;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #fff; /* Always visible thin white border */
+  box-sizing: border-box;
 }
 
 .toggle-slider::before {
