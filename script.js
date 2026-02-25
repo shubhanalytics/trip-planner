@@ -363,6 +363,7 @@ let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
 let userLocation = null;
 let isRegionRestricted = false;
 let isLocationPromptPending = false;
+let isPageTabDelegatedHandlerBound = false;
 
 function clearUnnecessaryCache() {
   const cacheVersion = localStorage.getItem(CACHE_VERSION_KEY);
@@ -831,6 +832,23 @@ function initPageTabs() {
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", updateActiveTabFromScroll);
   window.addEventListener("orientationchange", updateActiveTabFromScroll);
+
+  if (!isPageTabDelegatedHandlerBound) {
+    document.addEventListener("click", (event) => {
+      const tab = event.target.closest(".page-tab");
+      if (!tab) return;
+
+      const targetId = tab.dataset.target;
+      const targetElement = document.getElementById(targetId);
+      if (!targetElement) return;
+
+      event.preventDefault();
+      pageTabs.forEach((item) => item.classList.remove("active"));
+      tab.classList.add("active");
+      scrollToSection(targetElement);
+    });
+    isPageTabDelegatedHandlerBound = true;
+  }
 }
 
 function initQuickPresets() {

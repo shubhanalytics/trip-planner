@@ -33,8 +33,19 @@ function init() {
   
   // Clear all button
   if (clearAllBtn) {
+    clearAllBtn.type = "button";
     clearAllBtn.addEventListener("click", clearAllFavorites);
   }
+}
+
+if (!window.__wanderhubClearAllDelegatedBound) {
+  document.addEventListener("click", (event) => {
+    const clearBtn = event.target.closest("#clearAllFavorites");
+    if (!clearBtn) return;
+    event.preventDefault();
+    clearAllFavorites();
+  });
+  window.__wanderhubClearAllDelegatedBound = true;
 }
 
 // ============================================
@@ -411,4 +422,8 @@ function initMusicPlayer() {
 // ============================================
 // START APP
 // ============================================
-document.addEventListener("DOMContentLoaded", init);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
