@@ -51,7 +51,7 @@
                     <h2 class="favorites-page-title">Your Saved Destinations</h2>
                     <p class="favorites-page-subtitle">Your shortlist of handpicked destinations ready to explore</p>
                 </div>
-                <button class="clear-all-btn" id="clearAllFavorites">Clear All</button>
+                <button class="clear-all-btn" id="clearAllFavorites" type="button" onclick="if (confirm('Are you sure you want to clear all saved destinations?')) { localStorage.setItem('wanderhub_favorites', '[]'); location.reload(); }">Clear All</button>
             </div>
 
             <div class="favorites-empty" id="favoritesEmpty">

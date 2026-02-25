@@ -364,6 +364,7 @@ let userLocation = null;
 let isRegionRestricted = false;
 let isLocationPromptPending = false;
 let isPageTabDelegatedHandlerBound = false;
+let isHeroQuickStartHandlerBound = false;
 
 function clearUnnecessaryCache() {
   const cacheVersion = localStorage.getItem(CACHE_VERSION_KEY);
@@ -1000,6 +1001,20 @@ function initSmartAnchors() {
       scrollToSection(target);
     });
   });
+
+  if (!isHeroQuickStartHandlerBound) {
+    document.addEventListener("click", (event) => {
+      const startExploreBtn = event.target.closest('a.hero-btn-primary[href="#quickStart"]');
+      if (!startExploreBtn) return;
+
+      const quickStart = document.getElementById("quickStart");
+      if (!quickStart) return;
+
+      event.preventDefault();
+      scrollToSection(quickStart);
+    });
+    isHeroQuickStartHandlerBound = true;
+  }
 }
 
 

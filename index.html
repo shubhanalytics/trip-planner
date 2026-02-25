@@ -96,9 +96,9 @@
         </section>
 
         <nav class="page-tabs" aria-label="Page sections">
-            <button type="button" class="page-tab active" data-target="filtersSectionBlock">Trip Explorer</button>
-            <button type="button" class="page-tab" data-target="results">Destination Intelligence</button>
-            <button type="button" class="page-tab" data-target="tipsSection">Travel IQ</button>
+            <button type="button" class="page-tab active" data-target="filtersSectionBlock" onclick="document.getElementById('filtersSectionBlock')?.scrollIntoView({ behavior: 'smooth', block: 'start' });">Trip Explorer</button>
+            <button type="button" class="page-tab" data-target="results" onclick="document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });">Destination Intelligence</button>
+            <button type="button" class="page-tab" data-target="tipsSection" onclick="document.getElementById('tipsSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });">Travel IQ</button>
         </nav>
 
         <!-- Filters Section -->
