@@ -644,30 +644,11 @@ function initLocationPrompt() {
     if (e.target === locationModal) dismissLocationPrompt("skipped");
   });
 
-  const savedLocation = localStorage.getItem(LOCATION_KEY);
-  if (savedLocation) {
-    try {
-      userLocation = JSON.parse(savedLocation);
-    } catch {
-      userLocation = null;
-      localStorage.removeItem(LOCATION_KEY);
-    }
-  }
-  updateLocationStatusUI(!!userLocation);
-
-  if (userLocation && !isInIndia(userLocation.latitude, userLocation.longitude)) {
-    userLocation = null;
-    localStorage.removeItem(LOCATION_KEY);
-    localStorage.setItem(LOCATION_STATUS_KEY, "blocked-region");
-    updateLocationStatusUI(false);
-    setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
-  }
-
-  const status = localStorage.getItem(LOCATION_STATUS_KEY);
-  if (status === "blocked-region") {
-    // If previously blocked, don't show modal again
-    setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
-  }
+  userLocation = null;
+  localStorage.removeItem(LOCATION_KEY);
+  localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
+  updateLocationStatusUI(false);
+  setRegionRestriction(false);
 }
 
 // Toast notification
@@ -691,14 +672,16 @@ function showToast(message, duration = 3000) {
 }
 
 function handleGenerateSmartPicks() {
+  scrollToResults();
+
   if (!monthSelect.value) {
     showToast("📅 Please select a travel month to see destinations");
     return;
   }
 
   const locationStatus = localStorage.getItem(LOCATION_STATUS_KEY);
-  // Ask for location unless already allowed or blocked by region
-  const shouldAskLocation = locationStatus !== "allowed" && locationStatus !== "blocked-region";
+  // Ask for location unless currently enabled in this session or blocked by region.
+  const shouldAskLocation = !userLocation && locationStatus !== "blocked-region";
 
   if (shouldAskLocation && !userLocation) {
     isLocationPromptPending = true;
@@ -1703,9 +1686,10 @@ function createDestinationCard(dest, travelerCount) {
     const coords = getDestinationCoordinates(dest.place);
     if (coords) {
       const distanceKm = Math.round(haversineKm(userLocation, coords));
+      const distanceEmoji = dest.region === "international" ? "✈️" : "🚗";
       distanceInfo = `
         <div class="info-item">
-          <span class="info-label">🚗 Distance</span>
+          <span class="info-label">${distanceEmoji} Distance</span>
           <span class="info-value">${distanceKm} km</span>
         </div>`;
     }
