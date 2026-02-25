@@ -647,11 +647,45 @@ function initLocationPrompt() {
     if (e.target === locationModal) dismissLocationPrompt("skipped");
   });
 
+  const savedStatus = localStorage.getItem(LOCATION_STATUS_KEY);
+  const savedLocationRaw = localStorage.getItem(LOCATION_KEY);
+
+  if (savedStatus === "allowed" && savedLocationRaw) {
+    try {
+      const parsedLocation = JSON.parse(savedLocationRaw);
+      const hasValidCoords = Number.isFinite(parsedLocation?.latitude) && Number.isFinite(parsedLocation?.longitude);
+
+      if (hasValidCoords && isInIndia(parsedLocation.latitude, parsedLocation.longitude)) {
+        userLocation = parsedLocation;
+        updateLocationStatusUI(true);
+        setRegionRestriction(false);
+        return;
+      }
+
+      userLocation = null;
+      localStorage.removeItem(LOCATION_KEY);
+      localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
+      updateLocationStatusUI(false);
+      setRegionRestriction(false);
+      return;
+    } catch {
+      userLocation = null;
+      localStorage.removeItem(LOCATION_KEY);
+      localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
+      updateLocationStatusUI(false);
+      setRegionRestriction(false);
+      return;
+    }
+  }
+
   userLocation = null;
-  localStorage.removeItem(LOCATION_KEY);
-  localStorage.setItem(LOCATION_STATUS_KEY, "cleared");
   updateLocationStatusUI(false);
-  setRegionRestriction(false);
+
+  if (savedStatus === "blocked-region") {
+    setRegionRestriction(true, "Sorry, this service is currently available only within India. Please try again later.");
+  } else {
+    setRegionRestriction(false);
+  }
 }
 
 // Toast notification
