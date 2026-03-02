@@ -7,6 +7,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="theme-color" content="#667eea" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <title>Your Saved Destinations - WanderHub</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
@@ -51,7 +54,7 @@
                     <h2 class="favorites-page-title">Your Saved Destinations</h2>
                     <p class="favorites-page-subtitle">Your shortlist of handpicked destinations ready to explore</p>
                 </div>
-                <button class="clear-all-btn" id="clearAllFavorites" type="button" onclick="if (confirm('Are you sure you want to clear all saved destinations?')) { localStorage.setItem('wanderhub_favorites', '[]'); location.reload(); }">Clear All</button>
+                <button class="clear-all-btn" id="clearAllFavorites" type="button">Clear All</button>
             </div>
 
             <div class="favorites-empty" id="favoritesEmpty">

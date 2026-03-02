@@ -2,6 +2,66 @@
 // FAVORITES PAGE - WanderHub
 // ============================================
 
+// ============================================
+// SECURITY UTILITIES
+// ============================================
+/**
+ * Escapes HTML special characters to prevent XSS attacks
+ * @param {string} str - The string to escape
+ * @returns {string} - The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  const text = String(str);
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/**
+ * Escapes a string for use in HTML attributes
+ * @param {string} str - The string to escape
+ * @returns {string} - The escaped string safe for attribute insertion
+ */
+function escapeAttr(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Validates and sanitizes favorites data from localStorage
+ * @param {Array} data - The parsed favorites array
+ * @returns {Array} - Sanitized favorites array
+ */
+function sanitizeFavorites(data) {
+  if (!Array.isArray(data)) return [];
+  return data.filter(item => {
+    // Validate required fields exist and are strings
+    if (!item || typeof item !== 'object') return false;
+    if (typeof item.place !== 'string' || item.place.length === 0 || item.place.length > 200) return false;
+    return true;
+  }).map(item => ({
+    place: String(item.place || '').slice(0, 200),
+    temperature: String(item.temperature || 'N/A').slice(0, 50),
+    expense: String(item.expense || 'N/A').slice(0, 50),
+    duration: String(item.duration || 'N/A').slice(0, 50),
+    travel: String(item.travel || 'N/A').slice(0, 200),
+    bestFor: String(item.bestFor || 'All travelers').slice(0, 200),
+    attractions: String(item.attractions || 'N/A').slice(0, 500),
+    difficulty: String(item.difficulty || 'N/A').slice(0, 50),
+    rating: Math.min(Math.max(Number(item.rating) || 0, 0), 5),
+    vibes: Array.isArray(item.vibes) ? item.vibes.slice(0, 10).map(v => String(v).slice(0, 50)) : [],
+    savedAt: item.savedAt || null,
+    region: String(item.region || 'india').slice(0, 50),
+    month: String(item.month || '').slice(0, 20)
+  }));
+}
+
 // Constants & DOM Elements
 const FAVORITES_KEY = "wanderhub_favorites";
 const THEME_KEY = "wanderhub_theme";
@@ -19,7 +79,7 @@ const musicStatus = document.getElementById("musicStatus");
 const musicTrackName = document.getElementById("musicTrackName");
 
 // State
-let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+let favorites = sanitizeFavorites(JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []);
 let audioPlayer = null;
 
 // ============================================
@@ -146,11 +206,20 @@ function createFavoriteCard(dest) {
   const mainVibe = dest.vibes && dest.vibes[0] ? vibeEmojis[dest.vibes[0]] || "🌍" : "🌍";
   const savedDate = dest.savedAt ? new Date(dest.savedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
   
+  // Escape all dynamic data for XSS prevention
+  const safePlace = escapeHtml(dest.place);
+  const safePlaceAttr = escapeAttr(dest.place);
+  const safeTemperature = escapeHtml(dest.temperature || 'N/A');
+  const safeExpense = escapeHtml(dest.expense || 'N/A');
+  const safeDuration = escapeHtml(dest.duration || 'N/A');
+  const safeVibes = (dest.vibes || []).map(v => escapeHtml(v)).join(", ") || "Adventure";
+  const safeSavedDate = escapeHtml(savedDate);
+  
   return `
-    <div class="favorite-card" data-place="${dest.place}">
+    <div class="favorite-card" data-place="${safePlaceAttr}">
       <div class="favorite-card-header">
-        <h3 class="favorite-card-title">${dest.place}</h3>
-        <button class="favorite-remove-btn" data-place="${dest.place}" title="Remove from favorites">
+        <h3 class="favorite-card-title">${safePlace}</h3>
+        <button class="favorite-remove-btn" data-place="${safePlaceAttr}" title="Remove from favorites">
           ❌
         </button>
       </div>
@@ -158,34 +227,34 @@ function createFavoriteCard(dest) {
       <div class="favorite-card-details">
         <div class="favorite-detail-item">
           <span class="favorite-detail-icon">${mainVibe}</span>
-          <span>${dest.vibes ? dest.vibes.join(", ") : "Adventure"}</span>
+          <span>${safeVibes}</span>
         </div>
         
         <div class="favorite-detail-item">
           <span class="favorite-detail-icon">🌡️</span>
-          <span>${dest.temperature || "N/A"}</span>
+          <span>${safeTemperature}</span>
         </div>
         
         <div class="favorite-detail-item">
           <span class="favorite-detail-icon">💰</span>
-          <span>${dest.expense || "N/A"}</span>
+          <span>${safeExpense}</span>
         </div>
         
         <div class="favorite-detail-item">
           <span class="favorite-detail-icon">⏱️</span>
-          <span>${dest.duration || "N/A"}</span>
+          <span>${safeDuration}</span>
         </div>
         
         ${savedDate ? `
         <div class="favorite-detail-item">
           <span class="favorite-detail-icon">📅</span>
-          <span>Saved ${savedDate}</span>
+          <span>Saved ${safeSavedDate}</span>
         </div>
         ` : ""}
       </div>
       
       <div class="favorite-card-footer">
-        <button class="favorite-action-btn view-details-btn" data-place="${dest.place}">
+        <button class="favorite-action-btn view-details-btn" data-place="${safePlaceAttr}">
           👁️ View Details
         </button>
         <a class="favorite-action-btn" href="index.html">
@@ -247,54 +316,65 @@ function clearAllFavorites() {
 // DETAILS MODAL
 // ============================================
 function showDetailsModal(dest) {
+  // Escape all dynamic data for XSS prevention
+  const safePlace = escapeHtml(dest.place);
+  const safeTemperature = escapeHtml(dest.temperature || 'N/A');
+  const safeExpense = escapeHtml(dest.expense || 'N/A');
+  const safeTravel = escapeHtml(dest.travel || 'N/A');
+  const safeDuration = escapeHtml(dest.duration || 'N/A');
+  const safeBestFor = escapeHtml(dest.bestFor || 'All travelers');
+  const safeAttractions = escapeHtml(dest.attractions || 'N/A');
+  const safeDifficulty = escapeHtml(dest.difficulty || '');
+  const safeRating = escapeHtml(dest.rating || '');
+  
   const modalHTML = `
     <div class="modal" id="detailsModal">
       <div class="modal-content">
         <button class="modal-close" aria-label="Close modal">✕</button>
         <div class="modal-body">
-          <h2>${dest.place}</h2>
+          <h2>${safePlace}</h2>
           
           <div class="modal-section">
             <h3>🌡️ Temperature</h3>
-            <p>${dest.temperature || "N/A"}</p>
+            <p>${safeTemperature}</p>
           </div>
           
           <div class="modal-section">
             <h3>💰 Estimated Cost</h3>
-            <p>${dest.expense || "N/A"} per person</p>
+            <p>${safeExpense} per person</p>
           </div>
           
           <div class="modal-section">
             <h3>🚗 Travel Options</h3>
-            <p>${dest.travel || "N/A"}</p>
+            <p>${safeTravel}</p>
           </div>
           
           <div class="modal-section">
             <h3>⏱️ Recommended Duration</h3>
-            <p>${dest.duration || "N/A"}</p>
+            <p>${safeDuration}</p>
           </div>
           
           <div class="modal-section">
             <h3>🎯 Best For</h3>
-            <p>${dest.bestFor || "All travelers"}</p>
+            <p>${safeBestFor}</p>
           </div>
           
           <div class="modal-section">
             <h3>🏆 Top Attractions</h3>
-            <p>${dest.attractions || "N/A"}</p>
+            <p>${safeAttractions}</p>
           </div>
           
           ${dest.difficulty ? `
           <div class="modal-section">
             <h3>📊 Difficulty Level</h3>
-            <p>${dest.difficulty}</p>
+            <p>${safeDifficulty}</p>
           </div>
           ` : ""}
           
           ${dest.rating ? `
           <div class="modal-section">
             <h3>⭐ Rating</h3>
-            <p>${dest.rating} / 5.0</p>
+            <p>${safeRating} / 5.0</p>
           </div>
           ` : ""}
         </div>

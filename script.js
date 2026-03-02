@@ -8,6 +8,37 @@
 // REAL-TIME API: Future version will integrate with Google Places, TripAdvisor, and Booking.com APIs
 
 // ============================================
+// SECURITY UTILITIES
+// ============================================
+/**
+ * Escapes HTML special characters to prevent XSS attacks
+ * @param {string} str - The string to escape
+ * @returns {string} - The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  const text = String(str);
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/**
+ * Escapes a string for use in HTML attributes
+ * @param {string} str - The string to escape
+ * @returns {string} - The escaped string safe for attribute insertion
+ */
+function escapeAttr(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// ============================================
 // REAL-TIME DESTINATION DATA - UPDATED 2026
 // ============================================
 const destinationData = {
@@ -359,7 +390,37 @@ const LOCATION_KEY = "wanderhub_location";
 const LOCATION_STATUS_KEY = "wanderhub_location_status";
 const CACHE_VERSION_KEY = "wanderhub_cache_version";
 const CURRENT_CACHE_VERSION = "2026-02-25";
-let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+
+/**
+ * Validates and sanitizes favorites data from localStorage
+ * @param {Array} data - The parsed favorites array
+ * @returns {Array} - Sanitized favorites array
+ */
+function sanitizeFavorites(data) {
+  if (!Array.isArray(data)) return [];
+  return data.filter(item => {
+    // Validate required fields exist and are strings
+    if (!item || typeof item !== 'object') return false;
+    if (typeof item.place !== 'string' || item.place.length === 0 || item.place.length > 200) return false;
+    return true;
+  }).map(item => ({
+    place: String(item.place || '').slice(0, 200),
+    temperature: String(item.temperature || 'N/A').slice(0, 50),
+    expense: String(item.expense || 'N/A').slice(0, 50),
+    duration: String(item.duration || 'N/A').slice(0, 50),
+    travel: String(item.travel || 'N/A').slice(0, 200),
+    bestFor: String(item.bestFor || 'All travelers').slice(0, 200),
+    attractions: String(item.attractions || 'N/A').slice(0, 500),
+    difficulty: String(item.difficulty || 'N/A').slice(0, 50),
+    rating: Math.min(Math.max(Number(item.rating) || 0, 0), 5),
+    vibes: Array.isArray(item.vibes) ? item.vibes.slice(0, 10).map(v => String(v).slice(0, 50)) : [],
+    savedAt: item.savedAt || null,
+    region: String(item.region || 'india').slice(0, 50),
+    month: String(item.month || '').slice(0, 20)
+  }));
+}
+
+let favorites = sanitizeFavorites(JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []);
 let userLocation = null;
 let isRegionRestricted = false;
 let isLocationPromptPending = false;
@@ -1155,6 +1216,35 @@ function setupEventListeners() {
   budgetFilter.addEventListener("change", clearPresetSelection);
   vibeFilter.addEventListener("change", clearPresetSelection);
   travelerCountInput.addEventListener("change", clearPresetSelection);
+  
+  // Event delegation for dynamically created favorite buttons in detail modals
+  document.addEventListener("click", (e) => {
+    const favBtn = e.target.closest(".dest-detail-favorite-btn");
+    if (!favBtn) return;
+    
+    e.preventDefault();
+    const place = favBtn.dataset.place;
+    const region = favBtn.dataset.region || regionSelect.value;
+    const month = monthSelect.value;
+    
+    if (!place) return;
+    
+    const index = favorites.findIndex(fav => fav.place === place);
+    if (index > -1) {
+      favorites.splice(index, 1);
+      favBtn.textContent = "🤍 Save to Favorites";
+    } else {
+      const dest = destinationData[region]?.[month]?.find(d => d.place === place);
+      if (dest) {
+        favorites.push({ ...dest, savedAt: new Date().toISOString(), region, month });
+        favBtn.textContent = "❤️ Saved!";
+      }
+    }
+    
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    displayFavorites();
+    syncFavoritesBadge();
+  });
 }
 
 function applyTheme(theme) {
@@ -1277,25 +1367,33 @@ function initBestPlacesCarousel(monthName) {
   regionData.forEach((destination) => {
     const item = document.createElement("div");
     item.className = "carousel-item";
+    
+    // Escape all dynamic data for XSS prevention
+    const safePlace = escapeHtml(destination.place);
+    const safeTemperature = escapeHtml(destination.temperature);
+    const safeExpense = escapeHtml(destination.expense);
+    const safeRating = escapeHtml(destination.rating);
+    const vibesHtml = (destination.vibes || []).map(vibe => `<span class="carousel-vibe-tag">${escapeHtml(vibe)}</span>`).join("");
+    
     item.innerHTML = `
       <div class="carousel-card">
-        <div class="carousel-place-name">${destination.place}</div>
+        <div class="carousel-place-name">${safePlace}</div>
         <div class="carousel-details">
           <div class="carousel-detail-item">
             <span class="carousel-detail-icon">🌡️</span>
-            <span>${destination.temperature}</span>
+            <span>${safeTemperature}</span>
           </div>
           <div class="carousel-detail-item">
             <span class="carousel-detail-icon">💰</span>
-            <span>${destination.expense}</span>
+            <span>${safeExpense}</span>
           </div>
           <div class="carousel-detail-item">
             <span class="carousel-detail-icon">⭐</span>
-            <span>${destination.rating}/5</span>
+            <span>${safeRating}/5</span>
           </div>
         </div>
         <div class="carousel-vibes">
-          ${destination.vibes.map(vibe => `<span class="carousel-vibe-tag">${vibe}</span>`).join("")}
+          ${vibesHtml}
         </div>
       </div>
     `;
@@ -1384,59 +1482,74 @@ function startCarouselAutoScroll() {
 
 function createDestinationDetailContent(destination, region) {
   const rating = destination.rating || 0;
-  const stars = "⭐".repeat(Math.round(rating));
+  const stars = "⭐".repeat(Math.min(Math.round(rating), 5));
   
   const travelCost = userLocation ? estimateTravelCost(userLocation, destination, region) : "Contact for quote";
+  
+  // Escape all dynamic data for XSS prevention
+  const safePlace = escapeHtml(destination.place);
+  const safePlaceAttr = escapeAttr(destination.place);
+  const safeRegionAttr = escapeAttr(region);
+  const safeTemperature = escapeHtml(destination.temperature);
+  const safeExpense = escapeHtml(destination.expense);
+  const safeDuration = escapeHtml(destination.duration);
+  const safeBestFor = escapeHtml(destination.bestFor);
+  const safeAttractions = escapeHtml(destination.attractions);
+  const safeTravel = escapeHtml(destination.travel);
+  const safeTravelCost = escapeHtml(travelCost);
+  const safeRating = escapeHtml(rating);
+  
+  const vibesHtml = (destination.vibes || []).map(vibe => `<span class="vibe-badge">${escapeHtml(vibe)}</span>`).join("");
   
   return `
     <div class="dest-detail-container">
       <div class="dest-detail-title-section">
-        <h2>${destination.place}</h2>
-        <div class="dest-detail-rating">${stars} <span>${rating}/5</span></div>
+        <h2>${safePlace}</h2>
+        <div class="dest-detail-rating">${stars} <span>${safeRating}/5</span></div>
       </div>
       
       <div class="dest-detail-grid">
         <div class="dest-detail-item">
           <div class="dest-detail-label">🌡️ Temperature</div>
-          <div class="dest-detail-value">${destination.temperature}</div>
+          <div class="dest-detail-value">${safeTemperature}</div>
         </div>
         <div class="dest-detail-item">
           <div class="dest-detail-label">💰 Budget</div>
-          <div class="dest-detail-value">${destination.expense}</div>
+          <div class="dest-detail-value">${safeExpense}</div>
         </div>
         <div class="dest-detail-item">
           <div class="dest-detail-label">⏱️ Duration</div>
-          <div class="dest-detail-value">${destination.duration}</div>
+          <div class="dest-detail-value">${safeDuration}</div>
         </div>
         <div class="dest-detail-item">
           <div class="dest-detail-label">🚗 Travel Cost</div>
-          <div class="dest-detail-value">${travelCost}</div>
+          <div class="dest-detail-value">${safeTravelCost}</div>
         </div>
       </div>
       
       <div class="dest-detail-section">
         <div class="dest-detail-label">✨ Vibes</div>
         <div class="dest-detail-vibes">
-          ${destination.vibes.map(vibe => `<span class="vibe-badge">${vibe}</span>`).join("")}
+          ${vibesHtml}
         </div>
       </div>
       
       <div class="dest-detail-section">
         <div class="dest-detail-label">🎯 Best For</div>
-        <div class="dest-detail-text">${destination.bestFor}</div>
+        <div class="dest-detail-text">${safeBestFor}</div>
       </div>
       
       <div class="dest-detail-section">
         <div class="dest-detail-label">🏛️ Attractions</div>
-        <div class="dest-detail-text">${destination.attractions}</div>
+        <div class="dest-detail-text">${safeAttractions}</div>
       </div>
       
       <div class="dest-detail-section">
         <div class="dest-detail-label">🚗 Travel Options</div>
-        <div class="dest-detail-text">${destination.travel}</div>
+        <div class="dest-detail-text">${safeTravel}</div>
       </div>
       
-      <button class="dest-detail-favorite-btn" onclick="toggleFavorite({'place': '${destination.place}', 'region': '${region}'})">
+      <button class="dest-detail-favorite-btn" data-place="${safePlaceAttr}" data-region="${safeRegionAttr}">
         ❤️ Save to Favorites
       </button>
     </div>
@@ -1795,9 +1908,11 @@ function createDestinationCard(dest, travelerCount) {
   const totalMax = max * travelerCount;
   
   const isFavorite = favorites.some(fav => fav.place === dest.place);
-  const vibesList = dest.vibes.map(v => {
-    const vibeEmojis = { beach: "🏖️", mountain: "⛰️", cultural: "🏛️", adventure: "🚀", relaxation: "🧘", spiritual: "🙏" };
-    return `<span class="vibe-tag">${vibeEmojis[v] || ""} ${v.charAt(0).toUpperCase() + v.slice(1)}</span>`;
+  const vibeEmojis = { beach: "🏖️", mountain: "⛰️", cultural: "🏛️", adventure: "🚀", relaxation: "🧘", spiritual: "🙏" };
+  const vibesList = (dest.vibes || []).map(v => {
+    const safeVibe = escapeHtml(v);
+    const capitalizedVibe = safeVibe.charAt(0).toUpperCase() + safeVibe.slice(1);
+    return `<span class="vibe-tag">${vibeEmojis[v] || ""} ${capitalizedVibe}</span>`;
   }).join("");
   
   // Calculate distance from user location
@@ -1810,16 +1925,25 @@ function createDestinationCard(dest, travelerCount) {
       distanceInfo = `
         <div class="info-item">
           <span class="info-label">${distanceEmoji} Distance</span>
-          <span class="info-value">${distanceKm} km</span>
+          <span class="info-value">${escapeHtml(distanceKm)} km</span>
         </div>`;
     }
   }
   
+  // Escape all dynamic data for XSS prevention
+  const safePlace = escapeHtml(dest.place);
+  const safePlaceAttr = escapeAttr(dest.place);
+  const safeTemperature = escapeHtml(dest.temperature);
+  const safeExpense = escapeHtml(dest.expense);
+  const safeDuration = escapeHtml(dest.duration);
+  const safeBestFor = escapeHtml(dest.bestFor);
+  const safeRating = escapeHtml(dest.rating);
+  
   return `
-    <div class="destination-card" data-place="${dest.place}">
+    <div class="destination-card" data-place="${safePlaceAttr}">
       <div class="destination-card-header">
-        <h3>${dest.place}</h3>
-        <span class="destination-rating">⭐ ${dest.rating}</span>
+        <h3>${safePlace}</h3>
+        <span class="destination-rating">⭐ ${safeRating}</span>
       </div>
       
       <div class="destination-vibes">
@@ -1829,31 +1953,31 @@ function createDestinationCard(dest, travelerCount) {
       <div class="destination-info">
         <div class="info-item">
           <span class="info-label">🌡️ Temperature</span>
-          <span class="info-value">${dest.temperature}</span>
+          <span class="info-value">${safeTemperature}</span>
         </div>
         <div class="info-item">
           <span class="info-label">💰 Per Person</span>
-          <span class="info-value">${dest.expense}</span>
+          <span class="info-value">${safeExpense}</span>
         </div>
         <div class="info-item">
-          <span class="info-label">👥 Total (${travelerCount})</span>
+          <span class="info-label">👥 Total (${escapeHtml(travelerCount)})</span>
           <span class="info-value">${formatInr(totalMin)} - ${formatInr(totalMax)}</span>
         </div>${distanceInfo}
         <div class="info-item">
           <span class="info-label">⏱️ Duration</span>
-          <span class="info-value">${dest.duration}</span>
+          <span class="info-value">${safeDuration}</span>
         </div>
         <div class="info-item">
           <span class="info-label">🎯 Best For</span>
-          <span class="info-value" style="font-size: 0.9rem;">${dest.bestFor}</span>
+          <span class="info-value" style="font-size: 0.9rem;">${safeBestFor}</span>
         </div>
       </div>
       
       <div class="destination-actions">
-        <button class="btn-favorite ${isFavorite ? "active" : ""}" data-place="${dest.place}">
+        <button class="btn-favorite ${isFavorite ? "active" : ""}" data-place="${safePlaceAttr}">
           ${isFavorite ? "❤️ Saved" : "🤍 Save"}
         </button>
-        <button class="btn-view-details" data-place="${dest.place}">View Details</button>
+        <button class="btn-view-details" data-place="${safePlaceAttr}">View Details</button>
       </div>
     </div>
   `;
@@ -1944,42 +2068,55 @@ function showModal(dest) {
   const source = getSource(dest.place);
   const travelEstimate = estimateTravelCost(dest);
   const locationEstimate = travelEstimate
-    ? `${travelEstimate} per person`
+    ? `${escapeHtml(travelEstimate)} per person`
     : "Enable location to estimate travel cost from your city.";
   
-  const vibesList = dest.vibes.map(v => {
-    const vibeEmojis = { beach: "🏖️", mountain: "⛰️", cultural: "🏛️", adventure: "🚀", relaxation: "🧘", spiritual: "🙏" };
-    return `${vibeEmojis[v] || ""} ${v.charAt(0).toUpperCase() + v.slice(1)}`;
+  const vibeEmojis = { beach: "🏖️", mountain: "⛰️", cultural: "🏛️", adventure: "🚀", relaxation: "🧘", spiritual: "🙏" };
+  const vibesList = (dest.vibes || []).map(v => {
+    const safeVibe = escapeHtml(v);
+    return `${vibeEmojis[v] || ""} ${safeVibe.charAt(0).toUpperCase() + safeVibe.slice(1)}`;
   }).join(" • ");
   
+  // Escape all dynamic data for XSS prevention
+  const safePlace = escapeHtml(dest.place);
+  const safeRating = escapeHtml(dest.rating);
+  const safeBestFor = escapeHtml(dest.bestFor);
+  const safeSource = escapeHtml(source);
+  const safeAttractions = escapeHtml(dest.attractions);
+  const safeTemperature = escapeHtml(dest.temperature);
+  const safeDuration = escapeHtml(dest.duration);
+  const safeDifficulty = escapeHtml(dest.difficulty);
+  const safeTravel = escapeHtml(dest.travel);
+  const safeExpense = escapeHtml(dest.expense);
+  
   modalBody.innerHTML = `
-    <h2>${dest.place}</h2>
-    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">⭐ Rating: ${dest.rating}/5 | Best For: ${dest.bestFor}</p>
-    <p style="color: var(--accent-color); font-size: 0.9rem; margin-bottom: 1.5rem; font-style: italic;">📚 Source: ${source}</p>
+    <h2>${safePlace}</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">⭐ Rating: ${safeRating}/5 | Best For: ${safeBestFor}</p>
+    <p style="color: var(--accent-color); font-size: 0.9rem; margin-bottom: 1.5rem; font-style: italic;">📚 Source: ${safeSource}</p>
     
     <h3>Overview</h3>
     <p style="color: var(--text-secondary);">${vibesList}</p>
     
     <h3>Main Attractions</h3>
-    <p style="color: var(--text-secondary);">${dest.attractions}</p>
+    <p style="color: var(--text-secondary);">${safeAttractions}</p>
     
     <h3>Trip Details</h3>
     <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">🌡️ Temperature:</td>
-        <td style="padding: 0.75rem; font-weight: 600;">${dest.temperature}</td>
+        <td style="padding: 0.75rem; font-weight: 600;">${safeTemperature}</td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">⏱️ Best Duration:</td>
-        <td style="padding: 0.75rem; font-weight: 600;">${dest.duration}</td>
+        <td style="padding: 0.75rem; font-weight: 600;">${safeDuration}</td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">💪 Difficulty Level:</td>
-        <td style="padding: 0.75rem; font-weight: 600;">${dest.difficulty}</td>
+        <td style="padding: 0.75rem; font-weight: 600;">${safeDifficulty}</td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">🚗 Transport Options:</td>
-        <td style="padding: 0.75rem; font-weight: 600;">${dest.travel}</td>
+        <td style="padding: 0.75rem; font-weight: 600;">${safeTravel}</td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">📍 Travel estimate:</td>
@@ -1987,10 +2124,10 @@ function showModal(dest) {
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.75rem; color: var(--text-secondary);">💰 Cost per person:</td>
-        <td style="padding: 0.75rem; font-weight: 600;">${dest.expense}</td>
+        <td style="padding: 0.75rem; font-weight: 600;">${safeExpense}</td>
       </tr>
       <tr style="background: var(--bg-secondary);">
-        <td style="padding: 0.75rem; color: var(--text-secondary); font-weight: 600;">Total (${travelerCount} travelers):</td>
+        <td style="padding: 0.75rem; color: var(--text-secondary); font-weight: 600;">Total (${escapeHtml(travelerCount)} travelers):</td>
         <td style="padding: 0.75rem; font-weight: 700; font-size: 1.1rem;">${totalMin} - ${totalMax}</td>
       </tr>
     </table>
