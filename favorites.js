@@ -62,6 +62,27 @@ function sanitizeFavorites(data) {
   }));
 }
 
+// Toast notification helper
+function showToast(message, duration = 3000) {
+  let toast = document.getElementById("toastNotification");
+  
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "toastNotification";
+    toast.className = "toast-notification";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    document.body.appendChild(toast);
+  }
+  
+  toast.textContent = message;
+  toast.classList.add("show");
+  
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, duration);
+}
+
 // Constants & DOM Elements
 const FAVORITES_KEY = "wanderhub_favorites";
 const THEME_KEY = "wanderhub_theme";
@@ -293,8 +314,10 @@ function attachCardListeners() {
 function removeFavorite(place) {
   const index = favorites.findIndex(fav => fav.place === place);
   if (index > -1) {
+    const placeName = place.split(',')[0];
     favorites.splice(index, 1);
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    showToast(`❌ ${placeName} removed from favorites`);
     
     if (!favorites.length) {
       showEmptyState();
@@ -306,9 +329,11 @@ function removeFavorite(place) {
 
 function clearAllFavorites() {
   if (confirm("Are you sure you want to clear all saved destinations?")) {
+    const count = favorites.length;
     favorites = [];
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
     showEmptyState();
+    showToast(`🗑️ Cleared ${count} destination${count !== 1 ? 's' : ''}`);
   }
 }
 

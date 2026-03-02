@@ -794,6 +794,8 @@ function showToast(message, duration = 3000) {
     toast = document.createElement("div");
     toast.id = "toastNotification";
     toast.className = "toast-notification";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
     document.body.appendChild(toast);
   }
   
@@ -810,6 +812,8 @@ function handleGenerateSmartPicks(event) {
     event.preventDefault();
   }
 
+  const applyBtn = document.getElementById("applyFilters");
+  
   scrollToResults();
 
   if (!monthSelect.value) {
@@ -827,7 +831,22 @@ function handleGenerateSmartPicks(event) {
     return;
   }
 
-  updateResults();
+  // Show loading state
+  if (applyBtn) {
+    applyBtn.classList.add("loading");
+    applyBtn.setAttribute("aria-busy", "true");
+  }
+
+  // Use setTimeout to allow the UI to update before processing
+  setTimeout(() => {
+    updateResults();
+    
+    // Remove loading state
+    if (applyBtn) {
+      applyBtn.classList.remove("loading");
+      applyBtn.setAttribute("aria-busy", "false");
+    }
+  }, 150);
 }
 
 // Auto-scroll to results section
@@ -1995,12 +2014,14 @@ function toggleFavorite(place, btn) {
     favorites.splice(index, 1);
     btn.classList.remove("active");
     btn.textContent = "🤍 Save";
+    showToast(`❌ ${place.split(',')[0]} removed from favorites`);
   } else {
     const dest = destinationData[region]?.[month]?.find(d => d.place === place);
     if (dest) {
       favorites.push({ ...dest, savedAt: new Date().toISOString(), region, month });
       btn.classList.add("active");
       btn.textContent = "❤️ Saved";
+      showToast(`❤️ ${place.split(',')[0]} added to favorites`);
     }
   }
   

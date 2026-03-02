@@ -15,6 +15,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
 </head>
 <body>
+    <a href="#filtersSectionBlock" class="skip-to-content">Skip to main content</a>
     <div class="bg-orb orb-1" aria-hidden="true"></div>
     <div class="bg-orb orb-2" aria-hidden="true"></div>
     <div class="bg-grid" aria-hidden="true"></div>
@@ -72,7 +73,7 @@
                     <span class="hero-tag">🧠 Clear decision support</span>
                 </div>
                 <div class="hero-actions">
-                    <a href="#quickStart" class="hero-btn hero-btn-primary" onclick="document.getElementById('quickStart')?.scrollIntoView({ behavior: 'smooth', block: 'start' });">Start Exploring</a>
+                    <a href="#quickStart" class="hero-btn hero-btn-primary" id="heroExploreBtn">Start Exploring</a>
                 </div>
             </div>
         </section>
@@ -99,9 +100,9 @@
         </section>
 
         <nav class="page-tabs" aria-label="Page sections">
-            <button type="button" class="page-tab active" data-target="filtersSectionBlock" onclick="document.getElementById('filtersSectionBlock')?.scrollIntoView({ behavior: 'smooth', block: 'start' });">Trip Explorer</button>
-            <button type="button" class="page-tab" data-target="results" onclick="document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });">Destination Intelligence</button>
-            <button type="button" class="page-tab" data-target="tipsSection" onclick="document.getElementById('tipsSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });">Travel IQ</button>
+            <button type="button" class="page-tab active" data-target="filtersSectionBlock">Trip Explorer</button>
+            <button type="button" class="page-tab" data-target="results">Destination Intelligence</button>
+            <button type="button" class="page-tab" data-target="tipsSection">Travel IQ</button>
         </nav>
 
         <!-- Filters Section -->
@@ -110,11 +111,11 @@
                 <h2>Trip Explorer</h2>
                 <p>Set your month, style, and preferences. Use quick presets to move faster.</p>
             </div>
-            <div class="quick-presets" aria-label="Quick presets">
-                <button class="preset-chip" data-region="india" data-vibe="mountain" data-budget="budget">🏔️ India • Budget Mountains</button>
-                <button class="preset-chip" data-region="india" data-vibe="beach" data-budget="moderate">🏖️ India • Beach Escape</button>
-                <button class="preset-chip" data-region="international" data-vibe="cultural" data-budget="moderate">🏛️ International • Cultural Cities</button>
-                <button class="preset-chip" data-region="international" data-vibe="adventure" data-budget="luxury">🚀 International • Luxury Adventure</button>
+            <div class="quick-presets" role="group" aria-label="Quick preset filters">
+                <button class="preset-chip" type="button" data-region="india" data-vibe="mountain" data-budget="budget" aria-label="Apply preset: India Budget Mountains">🏔️ India • Budget Mountains</button>
+                <button class="preset-chip" type="button" data-region="india" data-vibe="beach" data-budget="moderate" aria-label="Apply preset: India Beach Escape">🏖️ India • Beach Escape</button>
+                <button class="preset-chip" type="button" data-region="international" data-vibe="cultural" data-budget="moderate" aria-label="Apply preset: International Cultural Cities">🏛️ International • Cultural Cities</button>
+                <button class="preset-chip" type="button" data-region="international" data-vibe="adventure" data-budget="luxury" aria-label="Apply preset: International Luxury Adventure">🚀 International • Luxury Adventure</button>
             </div>
             <div class="filters-container">
                 <div class="filter-group">
@@ -164,8 +165,8 @@
                 </div>
 
                 <div class="filter-actions">
-                    <button class="btn-apply" id="applyFilters">🔍 Generate Smart Picks</button>
-                    <button class="btn-reset" id="resetFilters">↻ Reset</button>
+                    <button class="btn-apply" id="applyFilters" type="button" aria-label="Generate smart destination picks based on your filters">🔍 Generate Smart Picks</button>
+                    <button class="btn-reset" id="resetFilters" type="button" aria-label="Reset all filters to default">↻ Reset</button>
                 </div>
             </div>
         </section>
